@@ -99,6 +99,7 @@
                 //var dictionary_url = 'https%3A%2F%2Fraw.githubusercontent.com%2Fellsworth-vinson%2Faudio%2Fmaster%2Fdictionary%2Flongman.json';
                 var dictionary_url = 'https://raw.githubusercontent.com/ellsworth-vinson/audio/master/dictionary/longman.json';
 
+                alert(dictionary_url);
                 UITools.showLoading();
                 DataSingleton.getInstance().readFromServer(URLHelper.getReadingDataUrl(), function () {
                     SettingsSingleton.getInstance().readFromServer(URLHelper.getReadingSettingsUrl(), function () {
