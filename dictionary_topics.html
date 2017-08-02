@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script type="text/javascript">
+      var script = document.createElement('script');
+      script.setAttribute('type', 'text/javascript');
+      script.setAttribute('src', 'https://raw.githubusercontent.com/ellsworth-vinson/english/master/js/sound.js');
+      document.body.appendChild(script);
+
+      script = document.createElement('script');
+      script.setAttribute('type', 'text/javascript');
+      script.setAttribute('src', 'https://raw.githubusercontent.com/ellsworth-vinson/english/master/js/ui.js');
+      document.body.appendChild(script);
+
+      script = document.createElement('script');
+      script.setAttribute('type', 'text/javascript');
+      script.setAttribute('src', 'https://raw.githubusercontent.com/ellsworth-vinson/english/master/js/dictionary.js');
+      document.body.appendChild(script);
+      function go1() {
+          alert(1)
+          localStorage.setItem("topics.html", "https://raw.githubusercontent.com/ellsworth-vinson/audio/master/dictionary/longman.json");
+          alert(2)
+      }
+  </script>
+</head>
+<body>
+<h2 align="center">English topics</h2>
+
+<table align="center">
+  <tr>
+    <th>Name</th>
+  </tr>
+  <tr>
+    <td><a onclick="go1()" href="http://htmlpreview.github.io/?https://github.com/ellsworth-vinson/english/blob/master/dictionary_topic.html">Longman</a></td>
+  </tr>
+</table>
+</body>
+</html>
