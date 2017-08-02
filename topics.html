@@ -4,23 +4,17 @@
   <meta charset="UTF-8">
   <title>Title</title>
   <script>
-      function go() {
-          var script = document.createElement('script');
-          script.setAttribute('type', 'text/javascript');
-          script.setAttribute('src', 'https://raw.githubusercontent.com/ellsworth-vinson/english/master/js/sound.js');
-          document.body.appendChild(script);
+      var script = document.createElement('script');
+      script.setAttribute('src', 'https://raw.githubusercontent.com/ellsworth-vinson/english/master/js/sound.js');
+      document.body.appendChild(script);
 
-          script = document.createElement('script');
-          script.setAttribute('type', 'text/javascript');
-          script.setAttribute('src', 'https://raw.githubusercontent.com/ellsworth-vinson/english/master/js/ui.js');
-          document.body.appendChild(script);
+      script = document.createElement('script');
+      script.setAttribute('src', 'https://raw.githubusercontent.com/ellsworth-vinson/english/master/js/ui.js');
+      document.body.appendChild(script);
 
-          script = document.createElement('script');
-          script.setAttribute('type', 'text/javascript');
-          script.setAttribute('src', 'https://raw.githubusercontent.com/ellsworth-vinson/english/master/js/dictionary.js');
-          document.body.appendChild(script);
-      }
-      go();
+      script = document.createElement('script');
+      script.setAttribute('src', 'https://raw.githubusercontent.com/ellsworth-vinson/english/master/js/dictionary.js');
+      document.body.appendChild(script);
       function go1() {
           alert(1)
           localStorage.setItem("topics.html", "https://raw.githubusercontent.com/ellsworth-vinson/audio/master/dictionary/longman.json");
