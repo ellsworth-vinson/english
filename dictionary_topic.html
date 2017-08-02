@@ -39,6 +39,10 @@
             }
         </style>
         <script>
+            var script = document.createElement('script');
+            script.setAttribute('type', 'text/javascript');
+            script.setAttribute('src', 'https://raw.githubusercontent.com/ellsworth-vinson/english/master/js/sound.js');
+            document.body.appendChild(script);
             document.write("<script src='https://raw.githubusercontent.com/ellsworth-vinson/english/master/js/sound.js' />");
             document.write("<script src='https://raw.githubusercontent.com/ellsworth-vinson/english/master/js/ui.js?' />");
             document.write("<script src='https://raw.githubusercontent.com/ellsworth-vinson/english/master/js/dictionary.js' />");
