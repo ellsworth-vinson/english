@@ -100,34 +100,37 @@
     <div id="container"></div>
     <script>
         document.onreadystatechange = function () {
-            if (document.readyState == "complete") {
-                let extImg = "https://raw.githubusercontent.com/ellsworth-vinson/english/master/img/plus.png";
-                let collImg = "https://raw.githubusercontent.com/ellsworth-vinson/english/master/img/minus.png";
-                let playStartImg = "https://raw.githubusercontent.com/ellsworth-vinson/english/master/img/play-start.png";
-                let playStopImg = "https://raw.githubusercontent.com/ellsworth-vinson/english/master/img/play-stop.png";
+            function go() {
+                if (document.readyState == "complete") {
+                    let extImg = "https://raw.githubusercontent.com/ellsworth-vinson/english/master/img/plus.png";
+                    let collImg = "https://raw.githubusercontent.com/ellsworth-vinson/english/master/img/minus.png";
+                    let playStartImg = "https://raw.githubusercontent.com/ellsworth-vinson/english/master/img/play-start.png";
+                    let playStopImg = "https://raw.githubusercontent.com/ellsworth-vinson/english/master/img/play-stop.png";
 
-                //var dictionary_url = localStorage.getItem("topics.html");
-                //alert(dictionary_url);
+                    //var dictionary_url = localStorage.getItem("topics.html");
+                    //alert(dictionary_url);
 
-                //var dictionary_url = decodeURIComponent(window.location.href.slice(window.location.href.indexOf('?') + 1));
-                //var dictionary_url = 'https%3A%2F%2Fraw.githubusercontent.com%2Fellsworth-vinson%2Faudio%2Fmaster%2Fdictionary%2Flongman.json';
-                var dictionary_url = 'https://raw.githubusercontent.com/ellsworth-vinson/audio/master/dictionary/longman.json';
+                    //var dictionary_url = decodeURIComponent(window.location.href.slice(window.location.href.indexOf('?') + 1));
+                    //var dictionary_url = 'https%3A%2F%2Fraw.githubusercontent.com%2Fellsworth-vinson%2Faudio%2Fmaster%2Fdictionary%2Flongman.json';
+                    var dictionary_url = 'https://raw.githubusercontent.com/ellsworth-vinson/audio/master/dictionary/longman.json';
 
-                alert(dictionary_url);
-                UITools.showLoading();
-                DataSingleton.getInstance().readFromServer(URLHelper.getReadingDataUrl(), function () {
-                    SettingsSingleton.getInstance().readFromServer(URLHelper.getReadingSettingsUrl(), function () {
-                        SettingsSingleton.getInstance().get().mode = document.getElementById('modeid').getAttribute('mode');
-                        SettingsSingleton.getInstance().save();
-                        initControls();
-                        loadJson(dictionary_url, function (response) {
-                            loadPage(response, extImg, collImg, playStartImg, playStopImg, function () {
-                                UITools.hideLoading();
-                            })
-                        });
-                    })
-                });
+                    alert(dictionary_url);
+                    UITools.showLoading();
+                    DataSingleton.getInstance().readFromServer(URLHelper.getReadingDataUrl(), function () {
+                        SettingsSingleton.getInstance().readFromServer(URLHelper.getReadingSettingsUrl(), function () {
+                            SettingsSingleton.getInstance().get().mode = document.getElementById('modeid').getAttribute('mode');
+                            SettingsSingleton.getInstance().save();
+                            initControls();
+                            loadJson(dictionary_url, function (response) {
+                                loadPage(response, extImg, collImg, playStartImg, playStopImg, function () {
+                                    UITools.hideLoading();
+                                })
+                            });
+                        })
+                    });
+                }
             }
+            go();
         }
     </script>
 </html>
