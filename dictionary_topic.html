@@ -2,9 +2,6 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <script id="s1" type="text/javascript" src="https://raw.githubusercontent.com/ellsworth-vinson/english/master/js/sound.js?q=2"></script>
-        <script id="s2" type="text/javascript" src="https://raw.githubusercontent.com/ellsworth-vinson/english/master/js/ui.js?q=2"></script>
-        <script id="s3" type="text/javascript" src="https://raw.githubusercontent.com/ellsworth-vinson/english/master/js/dictionary.js?q=5"></script>
         <style type="text/css">
             .ctl {
                 display: inline-block;
@@ -43,9 +40,16 @@
             script.setAttribute('type', 'text/javascript');
             script.setAttribute('src', 'https://raw.githubusercontent.com/ellsworth-vinson/english/master/js/sound.js');
             document.body.appendChild(script);
-            document.write("<script src='https://raw.githubusercontent.com/ellsworth-vinson/english/master/js/sound.js' />");
-            document.write("<script src='https://raw.githubusercontent.com/ellsworth-vinson/english/master/js/ui.js?' />");
-            document.write("<script src='https://raw.githubusercontent.com/ellsworth-vinson/english/master/js/dictionary.js' />");
+
+            script = document.createElement('script');
+            script.setAttribute('type', 'text/javascript');
+            script.setAttribute('src', 'https://raw.githubusercontent.com/ellsworth-vinson/english/master/js/ui.js');
+            document.body.appendChild(script);
+
+            script = document.createElement('script');
+            script.setAttribute('type', 'text/javascript');
+            script.setAttribute('src', 'https://raw.githubusercontent.com/ellsworth-vinson/english/master/js/dictionary.js');
+            document.body.appendChild(script);
         </script>
     </head>
     <div id="loading" style="visibility: hidden"></div>
