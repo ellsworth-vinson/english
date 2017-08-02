@@ -36,20 +36,23 @@
             }
         </style>
         <script>
-            var script = document.createElement('script');
-            script.setAttribute('type', 'text/javascript');
-            script.setAttribute('src', 'https://raw.githubusercontent.com/ellsworth-vinson/english/master/js/sound.js');
-            document.body.appendChild(script);
+            function go() {
+                var script = document.createElement('script');
+                script.setAttribute('type', 'text/javascript');
+                script.setAttribute('src', 'https://raw.githubusercontent.com/ellsworth-vinson/english/master/js/sound.js');
+                document.body.appendChild(script);
 
-            script = document.createElement('script');
-            script.setAttribute('type', 'text/javascript');
-            script.setAttribute('src', 'https://raw.githubusercontent.com/ellsworth-vinson/english/master/js/ui.js');
-            document.body.appendChild(script);
+                script = document.createElement('script');
+                script.setAttribute('type', 'text/javascript');
+                script.setAttribute('src', 'https://raw.githubusercontent.com/ellsworth-vinson/english/master/js/ui.js');
+                document.body.appendChild(script);
 
-            script = document.createElement('script');
-            script.setAttribute('type', 'text/javascript');
-            script.setAttribute('src', 'https://raw.githubusercontent.com/ellsworth-vinson/english/master/js/dictionary.js');
-            document.body.appendChild(script);
+                script = document.createElement('script');
+                script.setAttribute('type', 'text/javascript');
+                script.setAttribute('src', 'https://raw.githubusercontent.com/ellsworth-vinson/english/master/js/dictionary.js');
+                document.body.appendChild(script);
+            }
+            go();
         </script>
     </head>
     <div id="loading" style="visibility: hidden"></div>
@@ -100,7 +103,7 @@
     <div id="container"></div>
     <script>
         document.onreadystatechange = function () {
-            function go() {
+
                 if (document.readyState == "complete") {
                     let extImg = "https://raw.githubusercontent.com/ellsworth-vinson/english/master/img/plus.png";
                     let collImg = "https://raw.githubusercontent.com/ellsworth-vinson/english/master/img/minus.png";
@@ -129,8 +132,7 @@
                         })
                     });
                 }
-            }
-            go();
+
         }
     </script>
 </html>
