@@ -84,9 +84,11 @@ function createPageNavigation() {
         el.type = 'radio';
         el.name = 'page_navigation';
         el.value = i;
-        el.checked = i === settings.page_index;
+        el.removeAttribute('checked');
+        el.checked = i === parseInt(settings.page_index);
+            el.setAttribute('checked', 'checked');
         el.onclick = function () {
-            SettingsSingleton.getInstance().get().page_index = this.value;
+            SettingsSingleton.getInstance().get().page_index = parseInt(this.value);
             SettingsSingleton.getInstance().save();
             recreatePage(SettingsSingleton.getInstance().get());
         };
