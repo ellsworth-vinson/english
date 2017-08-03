@@ -1,11 +1,11 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Title</title>
+  <script src="https://raw.githubusercontent.com/ellsworth-vinson/english/master/js/persistent.js?q=1"></script>
   <script type="text/javascript">
       var s = document.createElement(name());
-      //s.setAttribute('type', 'text/javascript');
+      s.setAttribute('type', type());
       s.setAttribute('src', 'https://raw.githubusercontent.com/ellsworth-vinson/english/master/js/sound.js');
       document.body.appendChild(s);
 
@@ -15,6 +15,9 @@
       }
       function name() {
           return "script";
+      }
+      function type() {
+          return 'text/javascript';
       }
   </script>
 </head>
