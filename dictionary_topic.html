@@ -2,11 +2,11 @@
 <html lang="en">
 <link>
     <meta charset="UTF-8">
-    <script id="s1" type="text/javascript" src="http://rawgit.com/ellsworth-vinson/english/master/js/persistent.js?q=1"></script>
+    <script type="text/javascript" src="http://rawgit.com/ellsworth-vinson/english/master/js/persistent.js?q=1"></script>
     <script type="text/javascript" src="http://rawgit.com/ellsworth-vinson/english/master/js/sound.js?q=1"></script>
     <script type="text/javascript" src="http://rawgit.com/ellsworth-vinson/english/master/js/ui.js?q=1"></script>
     <script type="text/javascript"  src="http://rawgit.com/ellsworth-vinson/english/master/js/dictionary.js?q=1"></script>
-    <link rel="stylesheet" type="text/css" href="http://rawgit.com/ellsworth-vinson/english/master/css/view.css?q=11">
+    <link rel="stylesheet" type="text/css" href="http://rawgit.com/ellsworth-vinson/english/master/css/view.css?q=1">
 </head>
 <body>
 <div id="loading" style="visibility: hidden"></div>
@@ -64,6 +64,8 @@
         el.value = min ? 'Min' : 'Max';
         document.getElementById("navigateid").style.maxHeight = min ? '100px' : '25px';
     }
+    SettingsSingleton.getInstance().setName('longman_settings_dictionary');
+    DataSingleton.getInstance().setName('longman_data_dictionary');
     document.onreadystatechange = function () {
         if (document.readyState == "complete") {
             let extImg = "https://raw.githubusercontent.com/ellsworth-vinson/english/master/img/plus.png";
@@ -73,8 +75,7 @@
 
             var dictionary_url = localStorage.getItem("topics.html");
             //var dictionary_url = decodeURIComponent(window.location.href.slice(window.location.href.indexOf('?') + 1));
-            //var dictionary_url = 'https%3A%2F%2Fraw.githubusercontent.com%2Fellsworth-vinson%2Faudio%2Fmaster%2Fdictionary%2Flongman.json';
-            //var dictionary_url = 'https://raw.githubusercontent.com/ellsworth-vinson/audio/master/dictionary/longman.json';
+            //var dictionary_url = 'https://raw.githubusercontent.com/ellsworth-vinson/audio/master/dictionary/litvinov.3000.json?1';
             UITools.showLoading();
             SettingsSingleton.getInstance().get().mode = document.getElementById('modeid').getAttribute('mode');
             SettingsSingleton.getInstance().save();
