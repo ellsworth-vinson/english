@@ -64,8 +64,6 @@
         el.value = min ? 'Min' : 'Max';
         document.getElementById("navigateid").style.maxHeight = min ? '100px' : '25px';
     }
-    SettingsSingleton.getInstance().setName('longman_settings_dictionary');
-    DataSingleton.getInstance().setName('longman_data_dictionary');
     document.onreadystatechange = function () {
         if (document.readyState == "complete") {
             let extImg = "https://raw.githubusercontent.com/ellsworth-vinson/english/master/img/plus.png";
@@ -74,6 +72,8 @@
             let playStopImg = "https://raw.githubusercontent.com/ellsworth-vinson/english/master/img/play-stop.png";
 
             var dictionary_url = localStorage.getItem("topics.html");
+            SettingsSingleton.getInstance().setName('settings_dictionary_' + dictionary_url);
+            DataSingleton.getInstance().setName('data_dictionary_' + dictionary_url);
             console.log(dictionary_url);
             //var dictionary_url = decodeURIComponent(window.location.href.slice(window.location.href.indexOf('?') + 1));
             //var dictionary_url = 'https://raw.githubusercontent.com/ellsworth-vinson/audio/master/dictionary/litvinov.3000.json?1';
