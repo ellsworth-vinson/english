@@ -4,8 +4,17 @@
   <meta charset="UTF-8">
   <title>Title</title>
   <script type="text/javascript">
+      var s = document.createElement(name());
+      //s.setAttribute('type', 'text/javascript');
+      s.setAttribute('src', 'https://raw.githubusercontent.com/ellsworth-vinson/english/master/js/sound.js');
+      document.body.appendChild(s);
+
+      document.body.appendChild(script);
       function go1() {
           localStorage.setItem("topics.html", "https://raw.githubusercontent.com/ellsworth-vinson/audio/master/dictionary/longman.json");
+      }
+      function name() {
+          return "script";
       }
   </script>
 </head>
