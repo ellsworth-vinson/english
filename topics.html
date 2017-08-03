@@ -2,10 +2,16 @@
 <head>
   <meta charset="UTF-8">
   <title>Title</title>
-  <script src="https://raw.githubusercontent.com/ellsworth-vinson/english/master/js/persistent.js?q=1"></script>
   <script type="text/javascript">
       function go1() {
+          localStorage.removeItem("topics.html");
           localStorage.setItem("topics.html", "https://raw.githubusercontent.com/ellsworth-vinson/audio/master/dictionary/longman.json");
+          window.location.href = "http://htmlpreview.github.io/?https://github.com/ellsworth-vinson/english/blob/master/dictionary_topic.html";
+      }
+      function go2() {
+          localStorage.removeItem("topics.html");
+          localStorage.setItem("topics.html", "https://raw.githubusercontent.com/ellsworth-vinson/audio/master/dictionary/litvinov.3000.json");
+          window.location.href = "http://htmlpreview.github.io/?https://github.com/ellsworth-vinson/english/blob/master/dictionary_topic.html";
       }
   </script>
 </head>
@@ -17,7 +23,10 @@
     <th>Name</th>
   </tr>
   <tr>
-    <td><a onclick="go1()" href="http://htmlpreview.github.io/?https://github.com/ellsworth-vinson/english/blob/master/dictionary_topic.html">Longman</a></td>
+    <td><a onclick="go1()" href="#">Longman</a></td>
+  </tr>
+  <tr>
+    <td><a onclick="go2()" href="#">Литвинов. Тематический словарь-минимум 3000</a></td>
   </tr>
 </table>
 </body>
