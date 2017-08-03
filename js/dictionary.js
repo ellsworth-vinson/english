@@ -1,7 +1,3 @@
-/**
- * Created by vns on 7/5/17.
- */
-
 const CONTEXTS = {
     am: {
     },
@@ -39,36 +35,6 @@ const DataSingleton = (function () {
                 instance = createInstance();
             }
             return instance;
-        }
-    };
-})();
-
-const URLHelper = (function () {
-    let reading_base = '/eng/jsn/r/';
-    let writing_base = '/eng/jsn/w/';
-    let userId = undefined;
-
-    return {
-        setUserId: function (id) {
-            userId = id;
-        },
-        getRUrl: function (subPath) {
-            return userId === undefined ? undefined : reading_base + subPath + '/' + userId;
-        },
-        getWUrl: function (subPath) {
-            return userId === undefined ? undefined : writing_base + subPath + '/' + userId;
-        },
-        getReadingSettingsUrl: function () {
-            return userId === undefined ? undefined : URLHelper.getRUrl('dictionary_settings');
-        },
-        getWritingSettingsUrl: function () {
-            return userId === undefined ? undefined : URLHelper.getWUrl('dictionary_settings');
-        },
-        getReadingDataUrl: function () {
-            return userId === undefined ? undefined : URLHelper.getRUrl('dictionary_data');
-        },
-        getWritingDataUrl: function () {
-            return userId === undefined ? undefined : URLHelper.getWUrl('dictionary_data');
         }
     };
 })();
@@ -472,7 +438,7 @@ function save(el) {
     document.getElementById("filterid").disabled = true;
     if (mode === 'save') {
         SettingsSingleton.getInstance().recreate();
-        SettingsSingleton.getInstance().saveToServer(URLHelper.getWritingSettingsUrl(), function () {});
+        SettingsSingleton.getInstance().save();
         document.getElementById("filterid").disabled = false;
     } else if (mode === 'edit' || mode === 'filter') {
         if (mode === 'filter') {
@@ -484,7 +450,7 @@ function save(el) {
             SettingsSingleton.getInstance().recreate();
             DataSingleton.getInstance().recreate();
         }
-        DataSingleton.getInstance().saveToServer(URLHelper.getWritingDataUrl(), function () {});
+        DataSingleton.getInstance().save();
         clearElement("container");
         createUI();
         createPageNavigation();
@@ -541,9 +507,11 @@ function fillFilter2(ctx) {
     }
 }
 
-SettingsSingleton.getInstance().init('settings_dictionary', createSettings);
+SettingsSingleton.getInstance().setName('settings_dictionary');
+SettingsSingleton.getInstance().setInitFunc(createSettings);
 
-DataSingleton.getInstance().init('data_dictionary', function (data) {
+DataSingleton.getInstance().setName('data_dictionary');
+DataSingleton.getInstance().setInitFunc(function (data) {
     let dataCtn = data === undefined || data === null ? { filter1:{}, filter2: {}} : data;
     if (!dataCtn.hasOwnProperty('filter1')) dataCtn.filter1 = {};
     if (!dataCtn.hasOwnProperty('filter2')) dataCtn.filter2 = {};
