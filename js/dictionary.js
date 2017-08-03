@@ -310,10 +310,15 @@ function createUI(arg) {
             l.examples.forEach(function (tuple) {
                 let ex_eng = ctx.example_sound.lines[tuple.eng];
                 let ex_rus = ctx.example_sound.lines[tuple.rus];
+                let ex_eng_st = ex_eng === undefined ? undefined : ex_eng[0];
+                let ex_eng_ft = ex_eng === undefined ? undefined : ex_eng[1];
+                let ex_eng_tn = eng === undefined ? undefined : ex_eng[2];
+                let ex_rus_st = ex_rus === undefined ? undefined : ex_rus[0];
+                let ex_rus_ft = ex_rus === undefined ? undefined : ex_rus[1];
                 builder.addRow(undefined, false)
-                    .addCol({tx: tuple.eng, st: ex_eng[0], ft: ex_eng[1], tg: 'eng'})
-                    .addCol({tx: '[' + ex_eng[2] + ']', cl: 'grey', tg: 'eng'})
-                    .addCol({tx: tuple.rus, st: ex_rus[0], ft: ex_rus[1], tg: 'rus'}).toParent();
+                    .addCol({tx: tuple.eng, st: ex_eng_st, ft: ex_eng_ft, tg: 'eng'})
+                    .addCol({tx: '[' + ex_eng_tn + ']', cl: 'grey', tg: 'eng'})
+                    .addCol({tx: tuple.rus, st: ex_rus_st, ft: ex_rus_ft, tg: 'rus'}).toParent();
             });
         }
         builder.toParent();
