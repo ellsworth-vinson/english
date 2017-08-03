@@ -4,20 +4,8 @@
   <title>Title</title>
   <script src="https://raw.githubusercontent.com/ellsworth-vinson/english/master/js/persistent.js?q=1"></script>
   <script type="text/javascript">
-      var s = document.createElement(name());
-      s.setAttribute('type', type());
-      s.setAttribute('src', 'https://raw.githubusercontent.com/ellsworth-vinson/english/master/js/sound.js');
-      document.body.appendChild(s);
-
-      document.body.appendChild(script);
       function go1() {
           localStorage.setItem("topics.html", "https://raw.githubusercontent.com/ellsworth-vinson/audio/master/dictionary/longman.json");
-      }
-      function name() {
-          return "script";
-      }
-      function type() {
-          return 'text/javascript';
       }
   </script>
 </head>
