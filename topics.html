@@ -2,6 +2,12 @@
 <head>
   <meta charset="UTF-8">
   <title>Title</title>
+  <style>
+    span {
+      text-decoration: underline;
+      cursor: hand;
+    }
+  </style>
   <script type="text/javascript">
       function go1() {
           localStorage.removeItem("topics.html");
@@ -23,10 +29,10 @@
     <th>Name</th>
   </tr>
   <tr>
-    <td><a onclick="go1()" href="#">Longman</a></td>
+    <td><span onclick="go1()">Longman</span></td>
   </tr>
   <tr>
-    <td><a onclick="go2()" href="#">Литвинов. Тематический словарь-минимум 3000</a></td>
+    <td><span onclick="go2()">Литвинов. Тематический словарь-минимум 3000</span></td>
   </tr>
 </table>
 </body>
