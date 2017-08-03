@@ -19,6 +19,11 @@
           localStorage.setItem("topics.html", "https://raw.githubusercontent.com/ellsworth-vinson/audio/master/dictionary/litvinov.3000.json");
           window.location.href = "http://htmlpreview.github.io/?https://github.com/ellsworth-vinson/english/blob/master/dictionary_topic.html";
       }
+      function go5() {
+          localStorage.removeItem("topics.html");
+          localStorage.setItem("topics.html", "https://raw.githubusercontent.com/ellsworth-vinson/audio/master/dictionary/mydictionary.json");
+          window.location.href = "http://htmlpreview.github.io/?https://github.com/ellsworth-vinson/english/blob/master/dictionary_topic.html";
+      }
   </script>
 </head>
 <body>
@@ -33,6 +38,9 @@
   </tr>
   <tr>
     <td><span onclick="go2()">Литвинов. Тематический словарь-минимум 3000</span></td>
+  </tr>
+  <tr>
+    <td><span onclick="go5()">My dictionary</span></td>
   </tr>
 </table>
 </body>
