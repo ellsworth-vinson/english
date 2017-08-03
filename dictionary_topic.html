@@ -5,7 +5,7 @@
     <script id="s1" type="text/javascript" src="http://rawgit.com/ellsworth-vinson/english/master/js/persistent.js?q=1"></script>
     <script type="text/javascript" src="http://rawgit.com/ellsworth-vinson/english/master/js/sound.js?q=1"></script>
     <script type="text/javascript" src="http://rawgit.com/ellsworth-vinson/english/master/js/ui.js?q=1"></script>
-    <script type="text/javascript"  src="http://rawgit.com/ellsworth-vinson/english/master/js/dictionary.js?q=3"></script>
+    <script type="text/javascript"  src="http://rawgit.com/ellsworth-vinson/english/master/js/dictionary.js?q=1"></script>
     <link rel="stylesheet" type="text/css" href="http://rawgit.com/ellsworth-vinson/english/master/css/view.css">
 </head>
 <body>
@@ -47,9 +47,9 @@
         <input id="group3id" type="radio" style="display:inline;" name="group" onclick="recreatePage()">50
     </div>
     <div class="ctl">
-        &nbsp;&nbsp;&nbsp;<input id="modeid" type="button" checked onclick="saveToSession(this)" mode='view' value="Edit">
-        <input id="saveid" type="button" checked onclick="saveToSession(this)" mode='save' value="Save">
-        <input id="filterid" type="button" checked onclick="saveToSession(this)" mode='filter' value="Filter">
+        &nbsp;&nbsp;&nbsp;<input id="modeid" type="button" checked onclick="save(this)" mode='view' value="Edit">
+        <input id="saveid" type="button" checked onclick="save(this)" mode='save' value="Save">
+        <input id="filterid" type="button" checked onclick="save(this)" mode='filter' value="Filter">
     </div>
     <div id="navigateid" class="ctl" align="center" style="display: block"></div>
 </div>
@@ -64,12 +64,12 @@
             let playStartImg = "https://raw.githubusercontent.com/ellsworth-vinson/english/master/img/play-start.png";
             let playStopImg = "https://raw.githubusercontent.com/ellsworth-vinson/english/master/img/play-stop.png";
 
-            //var dictionary_url = localStorage.getItem("topics.html");
+            var dictionary_url = localStorage.getItem("topics.html");
             //alert(dictionary_url);
 
             //var dictionary_url = decodeURIComponent(window.location.href.slice(window.location.href.indexOf('?') + 1));
             //var dictionary_url = 'https%3A%2F%2Fraw.githubusercontent.com%2Fellsworth-vinson%2Faudio%2Fmaster%2Fdictionary%2Flongman.json';
-            var dictionary_url = 'https://raw.githubusercontent.com/ellsworth-vinson/audio/master/dictionary/longman.json';
+            //var dictionary_url = 'https://raw.githubusercontent.com/ellsworth-vinson/audio/master/dictionary/longman.json';
             UITools.showLoading();
             SettingsSingleton.getInstance().get().mode = document.getElementById('modeid').getAttribute('mode');
             SettingsSingleton.getInstance().save();
