@@ -6,7 +6,7 @@
     <script type="text/javascript" src="http://rawgit.com/ellsworth-vinson/english/master/js/sound.js?q=1"></script>
     <script type="text/javascript" src="http://rawgit.com/ellsworth-vinson/english/master/js/ui.js?q=1"></script>
     <script type="text/javascript"  src="http://rawgit.com/ellsworth-vinson/english/master/js/dictionary.js?q=1"></script>
-    <link rel="stylesheet" type="text/css" href="http://rawgit.com/ellsworth-vinson/english/master/css/view.css">
+    <link rel="stylesheet" type="text/css" href="http://rawgit.com/ellsworth-vinson/english/master/css/view.css?q=11">
 </head>
 <body>
 <div id="loading" style="visibility: hidden"></div>
@@ -50,13 +50,19 @@
         &nbsp;&nbsp;&nbsp;<input id="modeid" type="button" checked onclick="save(this)" mode='view' value="Edit">
         <input id="saveid" type="button" checked onclick="save(this)" mode='save' value="Save">
         <input id="filterid" type="button" checked onclick="save(this)" mode='filter' value="Filter">
+        <input id="pageid" type="button" onclick="minMax(this)" mode="min" value="Max">
     </div>
-    <div id="navigateid" class="ctl" align="center" style="display: block"></div>
+    <div id="navigateid" class="ctl" align="center" style="display: block;max-height: 25px;overflow: auto" navigate=""></div>
 </div>
 <div id="filter" style="display: none"></div>
 <div id="container"></div>
 <script>
-
+    function minMax(el) {
+        let min = el.getAttribute('mode').localeCompare('min') == 0 ? true : false;
+        el.setAttribute('mode', min ? 'max' : 'min');
+        el.value = min ? 'Min' : 'Max';
+        document.getElementById("navigateid").style.maxHeight = min ? '100px' : '25px';
+    }
     document.onreadystatechange = function () {
         if (document.readyState == "complete") {
             let extImg = "https://raw.githubusercontent.com/ellsworth-vinson/english/master/img/plus.png";
@@ -65,8 +71,6 @@
             let playStopImg = "https://raw.githubusercontent.com/ellsworth-vinson/english/master/img/play-stop.png";
 
             var dictionary_url = localStorage.getItem("topics.html");
-            //alert(dictionary_url);
-
             //var dictionary_url = decodeURIComponent(window.location.href.slice(window.location.href.indexOf('?') + 1));
             //var dictionary_url = 'https%3A%2F%2Fraw.githubusercontent.com%2Fellsworth-vinson%2Faudio%2Fmaster%2Fdictionary%2Flongman.json';
             //var dictionary_url = 'https://raw.githubusercontent.com/ellsworth-vinson/audio/master/dictionary/longman.json';
