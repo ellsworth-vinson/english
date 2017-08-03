@@ -46,6 +46,7 @@ let __playStopImg;
 let audioTextUI;
 let __filterUI;
 let __contentUI;
+let __audioContextBuffer = {}
 
 const Context = function (data_sound_url, example_sound_url, data_url) {
     this.data_sound_url = data_sound_url;
@@ -347,16 +348,33 @@ function clearFilterUI() {
 }
 
 function loadFile(ctx) {
-    loadJson(ctx.data_sound_url, function (response) {
-        ctx.data_sound = response;
-    });
-    loadJson(ctx.example_sound_url, function (response) {
-        ctx.example_sound = response;
-    });
-    loadJson(ctx.data_url, function (response) {
-        /** @namespace ctx.data.lines */
-        ctx.data = response;
-    });
+    if (isAssignedProp(__audioContextBuffer, ctx.data_sound_url)) {
+        ctx.data_sound = __audioContextBuffer[ctx.data_sound_url];
+    } else {
+        loadJson(ctx.data_sound_url, function (response) {
+            ctx.data_sound = response;
+            __audioContextBuffer[ctx.data_sound_url] = response;
+        });
+    }
+
+    if (isAssignedProp(__audioContextBuffer, ctx.example_sound)) {
+        ctx.example_sound = __audioContextBuffer[ctx.example_sound];
+    } else {
+        loadJson(ctx.example_sound_url, function (response) {
+            ctx.example_sound = response;
+            __audioContextBuffer[ctx.example_sound] = response;
+        });
+    }
+
+    if (isAssignedProp(__audioContextBuffer, ctx.data_url)) {
+        ctx.data_url = __audioContextBuffer[ctx.data_url];
+    } else {
+        loadJson(ctx.data_url, function (response) {
+            /** @namespace ctx.data.lines */
+            ctx.data = response;
+            __audioContextBuffer[ctx.data_url] = response;
+        });
+    }
 }
 
 function currentContext() {
