@@ -54,6 +54,12 @@ function SpeakingTextUI(ownID, context, expImgUrl, collImgUrl, playStartImgUrl, 
         return context;
     }
 
+    this.getAllRows = function () {
+        let rows = [];
+        receiveAllRows(context, rows);
+        return rows;
+    };
+
     this.setDelay = function (delay) {
         __delay = delay * 1000;
     }
@@ -150,6 +156,18 @@ function SpeakingTextUI(ownID, context, expImgUrl, collImgUrl, playStartImgUrl, 
             }
         };
         return ctx;
+    };
+
+    let receiveAllRows = function(root, rows) {
+        if (isAssignedProp(root, 'rows')) {
+            for(let key in root.rows) {
+                let row = root.rows[key];
+                rows.push(row);
+                if (isAssignedProp(row, 'rows')) {
+                    receiveAllRows(row, rows);
+                }
+            }
+        }
     }
 
     let createPlayElement = function (row, el, isHeader) {
@@ -484,7 +502,7 @@ ContextBuilder = function(snd) {
     this.build = function() {
         return root;
     }
-}
+};
 
 var UITools = (function () {
     var __loadingId;

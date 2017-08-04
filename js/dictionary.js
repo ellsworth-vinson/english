@@ -35,6 +35,15 @@ const DataSingleton = (function () {
                 instance = createInstance();
             }
             return instance;
+        },
+        isSelected: function(eng, notUseFilter2) {
+            let datas = DataSingleton.getInstance().get();
+            if (notUseFilter2 === undefined) notUseFilter2 = false;
+            let skipFilter2 = (!isAssignedProp(datas, 'filter2') || Object.keys(datas.filter2).length === 0)
+                || (notUseFilter2 !== undefined && notUseFilter2 != null && notUseFilter2);
+            return skipFilter2
+                ? datas.filter1 !== undefined && datas.filter1.hasOwnProperty(eng) && datas.filter1[eng] === true
+                : !datas.filter2.hasOwnProperty(eng);
         }
     };
 })();
@@ -237,7 +246,6 @@ function createTopic(ctxs) {
 
 function createUI(arg) {
     let settings = SettingsSingleton.getInstance().get();
-    let datas = DataSingleton.getInstance().get();
     let ctx = currentContext();
 
     let sortingLines = [];
@@ -272,8 +280,7 @@ function createUI(arg) {
         sortingLines = ctx.data.lines;
     }
 
-    let isFilter2Empty = getValueOfProp(arg, 'useFilter1', false)
-        || !isAssignedProp(datas, 'filter2') || Object.keys(datas.filter2).length === 0;
+    let useOnlyFilter1 = getValueOfProp(arg, 'useOnlyFilter1', false);
     /** @namespace ctx.data_sound.sound_url */
     let builder = new ContextBuilder(ctx.data_sound.sound_url);
     builder.addRow('', true, false)
@@ -285,9 +292,7 @@ function createUI(arg) {
         /** @namespace l.eng */
         /** @namespace l.rus */
 
-        let isSel = isFilter2Empty
-            ? datas.filter1 !== undefined && datas.filter1.hasOwnProperty(l.eng) && datas.filter1[l.eng] === true
-            : !datas.filter2.hasOwnProperty(l.eng);
+        let isSel = DataSingleton.isSelected(l.eng, useOnlyFilter1);
         l.__display = !(settings.mode === 'view' && isSel);
         if (!l.__display) return;
         let eng = ctx.data_sound.lines[l.eng];
@@ -304,22 +309,30 @@ function createUI(arg) {
         /** @namespace l.examples */
         if (l.examples !== undefined) {
             builder.setFile(ctx.example_sound.sound_url);
-            builder.addRow('', true, false)
-                .addCol({tx: 'eng', tg: 'eng'})
-                .addCol({tx: '[eng]', tg: 'eng'})
-                .addCol({tx: 'rus', tg: 'rus'}).toParent();
+            let addedHeader = false;
             l.examples.forEach(function (tuple) {
-                let ex_eng = ctx.example_sound.lines[tuple.eng];
-                let ex_rus = ctx.example_sound.lines[tuple.rus];
-                let ex_eng_st = ex_eng === undefined ? undefined : ex_eng[0];
-                let ex_eng_ft = ex_eng === undefined ? undefined : ex_eng[1];
-                let ex_eng_tn = eng === undefined ? undefined : ex_eng[2];
-                let ex_rus_st = ex_rus === undefined ? undefined : ex_rus[0];
-                let ex_rus_ft = ex_rus === undefined ? undefined : ex_rus[1];
-                builder.addRow(undefined, false)
-                    .addCol({tx: tuple.eng, st: ex_eng_st, ft: ex_eng_ft, tg: 'eng'})
-                    .addCol({tx: '[' + ex_eng_tn + ']', cl: 'grey', tg: 'eng'})
-                    .addCol({tx: tuple.rus, st: ex_rus_st, ft: ex_rus_ft, tg: 'rus'}).toParent();
+                isSel = DataSingleton.isSelected(tuple.eng, useOnlyFilter1);
+                let display = !(settings.mode === 'view' && isSel);
+                if (display) {
+                    if (!addedHeader) {
+                        builder.addRow('', true, false)
+                            .addCol({tx: 'eng', tg: 'eng'})
+                            .addCol({tx: '[eng]', tg: 'eng'})
+                            .addCol({tx: 'rus', tg: 'rus'}).toParent();
+                        addedHeader = true;
+                    }
+                    let ex_eng = ctx.example_sound.lines[tuple.eng];
+                    let ex_rus = ctx.example_sound.lines[tuple.rus];
+                    let ex_eng_st = ex_eng === undefined ? undefined : ex_eng[0];
+                    let ex_eng_ft = ex_eng === undefined ? undefined : ex_eng[1];
+                    let ex_eng_tn = eng === undefined ? undefined : ex_eng[2];
+                    let ex_rus_st = ex_rus === undefined ? undefined : ex_rus[0];
+                    let ex_rus_ft = ex_rus === undefined ? undefined : ex_rus[1];
+                        builder.addRow(undefined, false, isSel)
+                            .addCol({tx: tuple.eng, st: ex_eng_st, ft: ex_eng_ft, tg: 'eng'})
+                            .addCol({tx: '[' + ex_eng_tn + ']', cl: 'grey', tg: 'eng'})
+                            .addCol({tx: tuple.rus, st: ex_rus_st, ft: ex_rus_ft, tg: 'rus'}).toParent();
+                }
             });
         }
         builder.toParent();
@@ -510,7 +523,7 @@ function save(el) {
         el.value = 'View';
         SettingsSingleton.getInstance().recreate();
         clearElement("container");
-        createUI({ useFilter1: true });
+        createUI({ useOnlyFilter1: true });
         createPageNavigation();
         repaint();
         fillFilter2UI();
@@ -564,9 +577,12 @@ DataSingleton.getInstance().setInitFunc(function (data) {
     if (!dataCtn.hasOwnProperty('filter1')) dataCtn.filter1 = {};
     if (!dataCtn.hasOwnProperty('filter2')) dataCtn.filter2 = {};
     if (audioTextUI === undefined) return dataCtn;
-    let ctx = audioTextUI.getContext();
-    ctx.rows.forEach(function (c) {
-        dataCtn.filter1[c.cols[0].tx] = c.sel !== undefined && c.sel;
+    let rows = audioTextUI.getAllRows();
+    let selRows = {};
+    rows.forEach(function (c) {
+        let tx = c.cols[0].tx;
+        selRows[tx] = c.sel !== undefined && c.sel || getValueOfProp(selRows, tx, false);
+        dataCtn.filter1[c.cols[0].tx] = selRows[tx];
     });
     fillFilter2(dataCtn);
     return dataCtn;
