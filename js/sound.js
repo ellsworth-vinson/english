@@ -299,6 +299,7 @@ function clearElement(elementID) {
     while (el.hasChildNodes()) {
         el.removeChild(el.firstChild);
     }
+    return el;
 }
 
 function disabledElement(el, state) {
