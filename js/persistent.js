@@ -59,3 +59,9 @@ PersistentObject = function() {
         }
     }
 };
+
+const IDENTITY = new PersistentObject();
+IDENTITY.setName("https://github.com/ellsworth-vinson/english");
+IDENTITY.setInitFunc(function (data) {
+    return (data === undefined || data === null) ? { identity: '' } : data;
+});

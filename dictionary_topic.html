@@ -81,8 +81,8 @@
             let playStopImg = "https://raw.githubusercontent.com/ellsworth-vinson/english/master/img/play-stop.png";
 
             var dictionary_url = localStorage.getItem("topics.html");
-            SettingsSingleton.getInstance().setName('settings_dictionary_' + dictionary_url);
-            DataSingleton.getInstance().setName('data_dictionary_' + dictionary_url);
+            SettingsSingleton.getInstance().setName('settings_dictionary_' + dictionary_url + "_" + IDENTITY.get().identity);
+            DataSingleton.getInstance().setName('data_dictionary_' + dictionary_url + "_" + IDENTITY.get().identity);
             console.log(dictionary_url);
             //var dictionary_url = decodeURIComponent(window.location.href.slice(window.location.href.indexOf('?') + 1));
             //dictionary_url = 'https://raw.githubusercontent.com/ellsworth-vinson/audio/master/dictionary/litvinov.3000.json';

@@ -8,6 +8,8 @@
       cursor: hand;
     }
   </style>
+  <!--<script type="text/javascript" src="js/persistent.js?q=1"></script>-->
+  <script type="text/javascript" src="http://rawgit.com/ellsworth-vinson/english/master/js/persistent.js?q=1"></script>
   <script type="text/javascript">
       function go1() {
           localStorage.removeItem("topics.html");
@@ -24,9 +26,26 @@
           localStorage.setItem("topics.html", "https://raw.githubusercontent.com/ellsworth-vinson/audio/master/dictionary/mydictionary.json");
           window.location.href = "http://htmlpreview.github.io/?https://github.com/ellsworth-vinson/english/blob/master/dictionary_topic.html";
       }
+
+      document.onreadystatechange = function () {
+          if (document.readyState == "complete") {
+            let el = document.getElementById("identity");
+            el.value = IDENTITY.get().identity;
+          }
+      };
+      function changeid() {
+          let el = document.getElementById("identity");
+          IDENTITY.get().identity = el.value;
+          IDENTITY.save();
+      }
   </script>
 </head>
 <body>
+<div align="left">
+  <span>Identity:</span><input type="text" id="identity" maxlength="50">
+  <button onclick="changeid()">Save</button>
+</div>
+
 <h2 align="center">English topics</h2>
 
 <table align="center">
