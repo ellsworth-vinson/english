@@ -19,11 +19,11 @@
 <body>
 <div id="loading" style="visibility: hidden"></div>
 <div id="controlid" style="border: thin solid grey">
-    <div class="ctl"><span>eng:</span><input type="checkbox" id="enid" checked onclick="repaintHideColumns()"></div>
-    <div class="ctl"><span>rus:</span><input type="checkbox" id="ruid" checked onclick="repaintHideColumns()"></div>
-    <div class="ctl"><span>loop:</span><input type="checkbox" id="loopid" checked onclick="repaintLoop()"></div>
-    <div class="ctl"><span>scroll:</span><input type="checkbox" id="scrollid" onclick="repaintScroll()"></div>
-    <div class="ctl"><span>example:</span><input type="checkbox" id="exampleid" onclick="repaintExample()"></div>
+    <div class="ctl"><span>eng:</span><input type="checkbox" id="enid" checked onchange="repaintHideColumns()"></div>
+    <div class="ctl"><span>rus:</span><input type="checkbox" id="ruid" checked onchange="repaintHideColumns()"></div>
+    <div class="ctl"><span>loop:</span><input type="checkbox" id="loopid" checked onchange="repaintLoop()"></div>
+    <div class="ctl"><span>scroll:</span><input type="checkbox" id="scrollid" onchange="repaintScroll()"></div>
+    <div class="ctl"><span>example:</span><input type="checkbox" id="exampleid" onchange="repaintExample()"></div>
     <div class="ctl" id="example_player_id" style="padding-top: 5px"></div>
     <div class="ctl"><span>sort:&nbsp;</span><select id="sortid" onchange="recreate()">
         <option value="0">none</option>
@@ -42,14 +42,14 @@
     </div>
     <div class="ctl">
         &nbsp;&nbsp;&nbsp;phonetic:
-        <input id="amid" type="radio" name="phonetic" checked onclick="recreate()">am
-        <input id="brid" type="radio" name="phonetic" onclick="recreate()">br
+        <input id="amid" type="radio" name="phonetic" checked onchange="recreate()">am
+        <input id="brid" type="radio" name="phonetic" onchange="recreate()">br
     </div>
     <div class="ctl">
         &nbsp;&nbsp;&nbsp;section:
-        <input id="group1id" type="radio" style="display:inline;" name="group" checked onclick="recreatePage()">10
-        <input id="group2id" type="radio" style="display:inline;" name="group" onclick="recreatePage()">25
-        <input id="group3id" type="radio" style="display:inline;" name="group" onclick="recreatePage()">50
+        <input id="group1id" type="radio" style="display:inline;" name="group" checked onchange="recreatePage()">10
+        <input id="group2id" type="radio" style="display:inline;" name="group" onchange="recreatePage()">25
+        <input id="group3id" type="radio" style="display:inline;" name="group" onchange="recreatePage()">50
     </div>
     <div class="ctl">
         &nbsp;&nbsp;&nbsp;<input id="modeid" type="button" checked onclick="save(this)" mode='view' value="Edit">
@@ -59,7 +59,7 @@
     </div>
     <div class="ctl" style="display: block; padding: 5px" align="right">
         &nbsp;&nbsp;&nbsp;topic:
-        <select id="topicid" onclick="recreate()"></select>
+        <select id="topicid" onchange="recreate()"></select>
     </div>
     <div id="navigateid" class="ctl" align="center" style="display: block;max-height: 25px;overflow: auto" navigate=""></div>
 </div>

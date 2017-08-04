@@ -95,7 +95,7 @@ function createPageNavigation() {
         el.name = 'page_navigation';
         el.value = i;
         el.checked = i === parseInt(settings.page_index);
-        el.onclick = function () {
+        el.onchange = function () {
             SettingsSingleton.getInstance().get().page_index = this.value;
             SettingsSingleton.getInstance().save();
             recreatePage(SettingsSingleton.getInstance().get());
