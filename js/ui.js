@@ -152,7 +152,7 @@ function SpeakingTextUI(ownID, context, expImgUrl, collImgUrl, playStartImgUrl, 
         return ctx;
     }
 
-    var createPlayElement = function (row, el, isHeader) {
+    let createPlayElement = function (row, el, isHeader) {
         if (typeof row.__parent.file === 'undefined') {
             return;
         }
@@ -167,9 +167,26 @@ function SpeakingTextUI(ownID, context, expImgUrl, collImgUrl, playStartImgUrl, 
             }
         });
         el.appendChild(player.getControl());
-    }
+    };
 
-    var fillTraces = function (row, file, traces) {
+    this.createPlayer = function (rows) {
+        if (rows.length == 0 || typeof rows[0].__parent.file === 'undefined') {
+            return undefined;
+        }
+        let player = new PlayerWrapper(playStartImgUrl, playStopImgUrl, function (state) {
+            if (state == 'start') {
+                plays(rows, player);
+            }
+            if (state == 'finished') {
+                if (typeof __currentPlayer !== 'undefined') {
+                    __currentPlayer.stop();
+                }
+            }
+        });
+        return player.getControl();
+    };
+
+    let fillTraces = function (row, file, traces) {
         if (typeof file === 'undefined') {
             return;
         }
@@ -186,9 +203,17 @@ function SpeakingTextUI(ownID, context, expImgUrl, collImgUrl, playStartImgUrl, 
                 traces.push(__currentPlayer.createTrace(cl.st, cl.ft, __delay, cl, cl.tx));
             }
         });
-    }
+    };
 
-    var play = function (row, single, player) {
+    let plays = function (rows, player) {
+        let traces = [];
+        [].forEach.call(rows, function (row) {
+            fillTraces(row, row.__parent.file, traces);
+        });
+        playCurrentPlayer(traces, player);
+    };
+
+    let play = function (row, single, player) {
         let traces = [];
         if (single)
             fillTraces(row, row.__parent.file, traces);
@@ -197,6 +222,10 @@ function SpeakingTextUI(ownID, context, expImgUrl, collImgUrl, playStartImgUrl, 
                 fillTraces(row, row.__parent.file, traces);
             });
         }
+        playCurrentPlayer(traces, player);
+    };
+
+    let playCurrentPlayer = function (traces, player) {
         __currentPlayer.play(traces, __loop, function (state, tag) {
             if (typeof tag !== 'undefined') {
                 let el = tag.__el;
@@ -222,9 +251,9 @@ function SpeakingTextUI(ownID, context, expImgUrl, collImgUrl, playStartImgUrl, 
                 if (typeof startStop !== 'undefined') startStop(true);
             }
         });
-    }
+    };
 
-    var createLine = function (row, tb, number) {
+    let createLine = function (row, tb, number) {
         let tr = document.createElement("tr");
         tb.appendChild(tr);
         let isHeader = typeof row.head !== 'undefined';
@@ -316,7 +345,7 @@ function SpeakingTextUI(ownID, context, expImgUrl, collImgUrl, playStartImgUrl, 
         }
     };
 
-    var isExpanded = function (el) {
+    let isExpanded = function (el) {
         return el.rowSpan == 2;
     }
 

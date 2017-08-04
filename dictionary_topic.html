@@ -2,11 +2,19 @@
 <html lang="en">
 <link>
     <meta charset="UTF-8">
-    <script type="text/javascript" src="http://rawgit.com/ellsworth-vinson/english/master/js/persistent.js?q=1"></script>
-    <script type="text/javascript" src="http://rawgit.com/ellsworth-vinson/english/master/js/sound.js?q=1"></script>
-    <script type="text/javascript" src="http://rawgit.com/ellsworth-vinson/english/master/js/ui.js?q=1"></script>
-    <script type="text/javascript"  src="http://rawgit.com/ellsworth-vinson/english/master/js/dictionary.js?q=1"></script>
-    <link rel="stylesheet" type="text/css" href="http://rawgit.com/ellsworth-vinson/english/master/css/view.css?q=1">
+    <!--<script type="text/javascript" src="http://rawgit.com/ellsworth-vinson/english/master/js/persistent.js?q=1"></script>-->
+    <!--<script type="text/javascript" src="http://rawgit.com/ellsworth-vinson/english/master/js/sound.js?q=1"></script>-->
+    <!--<script type="text/javascript" src="http://rawgit.com/ellsworth-vinson/english/master/js/ui.js?q=1"></script>-->
+    <!--<script type="text/javascript"  src="http://rawgit.com/ellsworth-vinson/english/master/js/dictionary.js?q=1"></script>-->
+    <!--<script type="text/javascript"  src="http://rawgit.com/ellsworth-vinson/english/master/js/dictionary.js?q=1"></script>-->
+    <!--<link rel="stylesheet" type="text/css" href="http://rawgit.com/ellsworth-vinson/english/master/css/view.css?q=1">-->
+
+    <script type="text/javascript" src="js/persistent.js?q=1"></script>
+    <script type="text/javascript" src="js/sound.js?q=1"></script>
+    <script type="text/javascript" src="js/ui.js?q=1"></script>
+    <script type="text/javascript"  src="js/dictionary.js?q=1"></script>
+    <script type="text/javascript"  src="js/dictionary.js?q=1"></script>
+    <link rel="stylesheet" type="text/css" href="css/view.css?q=1">
 </head>
 <body>
 <div id="loading" style="visibility: hidden"></div>
@@ -16,6 +24,7 @@
     <div class="ctl"><span>loop:</span><input type="checkbox" id="loopid" checked onclick="repaintLoop()"></div>
     <div class="ctl"><span>scroll:</span><input type="checkbox" id="scrollid" onclick="repaintScroll()"></div>
     <div class="ctl"><span>example:</span><input type="checkbox" id="exampleid" onclick="repaintExample()"></div>
+    <div class="ctl" id="example_player_id" style="padding-top: 5px"></div>
     <div class="ctl"><span>sort:&nbsp;</span><select id="sortid" onclick="recreate()">
         <option value="0">none</option>
         <option value="1">asc</option>
@@ -37,10 +46,6 @@
         <input id="brid" type="radio" name="phonetic" onclick="recreate()">br
     </div>
     <div class="ctl">
-        &nbsp;&nbsp;&nbsp;topic:
-        <select id="topicid" onclick="recreate()"></select>
-    </div>
-    <div class="ctl">
         &nbsp;&nbsp;&nbsp;section:
         <input id="group1id" type="radio" style="display:inline;" name="group" checked onclick="recreatePage()">10
         <input id="group2id" type="radio" style="display:inline;" name="group" onclick="recreatePage()">25
@@ -51,6 +56,10 @@
         <input id="saveid" type="button" checked onclick="save(this)" mode='save' value="Save">
         <input id="filterid" type="button" checked onclick="save(this)" mode='filter' value="Filter">
         <input id="pageid" type="button" onclick="minMax(this)" mode="min" value="Max">
+    </div>
+    <div class="ctl" style="display: block; padding: 5px" align="right">
+        &nbsp;&nbsp;&nbsp;topic:
+        <select id="topicid" onclick="recreate()"></select>
     </div>
     <div id="navigateid" class="ctl" align="center" style="display: block;max-height: 25px;overflow: auto" navigate=""></div>
 </div>
@@ -76,7 +85,7 @@
             DataSingleton.getInstance().setName('data_dictionary_' + dictionary_url);
             console.log(dictionary_url);
             //var dictionary_url = decodeURIComponent(window.location.href.slice(window.location.href.indexOf('?') + 1));
-            //var dictionary_url = 'https://raw.githubusercontent.com/ellsworth-vinson/audio/master/dictionary/litvinov.3000.json?1';
+            //dictionary_url = 'https://raw.githubusercontent.com/ellsworth-vinson/audio/master/dictionary/litvinov.3000.json';
             UITools.showLoading();
             SettingsSingleton.getInstance().get().mode = document.getElementById('modeid').getAttribute('mode');
             SettingsSingleton.getInstance().save();

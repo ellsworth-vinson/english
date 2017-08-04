@@ -46,7 +46,7 @@ let __playStopImg;
 let audioTextUI;
 let __filterUI;
 let __contentUI;
-let __audioContextBuffer = {}
+let __audioContextBuffer = {};
 
 const Context = function (data_sound_url, example_sound_url, data_url) {
     this.data_sound_url = data_sound_url;
@@ -301,6 +301,7 @@ function createUI(arg) {
             .addCol({tx: l.eng, tg: 'eng', st: eng_st, ft: eng_ft})
             .addCol({tx: '[' + eng_tn + ']', tg: 'eng', cl: 'grey'})
             .addCol({tx: l.rus, tg: 'rus', st: rus_st, ft: rus_ft, cl: 'grey'});
+        /** @namespace l.examples */
         if (l.examples !== undefined) {
             builder.setFile(ctx.example_sound.sound_url);
             builder.addRow('', true, false)
@@ -324,7 +325,8 @@ function createUI(arg) {
         builder.toParent();
     });
 
-    audioTextUI = new SpeakingTextUI('container', builder.build(),
+    let rootRow = builder.build();
+    audioTextUI = new SpeakingTextUI('container', rootRow,
         __extImg, __collImg, __playStartImg, __playStopImg, true, false,
         function (state) {
             let els = document.querySelectorAll('.ctl');
@@ -332,6 +334,8 @@ function createUI(arg) {
                 disabledElement(el, state);
             })
         });
+
+    createExamplePlayer(rootRow);
 
     if (__filterUI === undefined || __filterUI === null) {
         const fel = clearFilterUI();
@@ -347,9 +351,30 @@ function createUI(arg) {
     }
 }
 
+function createExamplePlayer(rootRow) {
+    let rowsExamplePlayer = [];
+    for (let key1 in rootRow.rows) {
+        let row1 = getValueOfProp(rootRow.rows, key1, null);
+        if (isAssignedProp(row1, 'rows')) {
+            for (let key2 in row1.rows) {
+                let row2 = getValueOfProp(row1.rows, key2, null);
+                if (!getValueOfProp(row2, 'head', false)) {
+                    rowsExamplePlayer.push(row2)
+                }
+            }
+        }
+    }
+    let container = clearElement("example_player_id");
+    if (rowsExamplePlayer.length > 0) {
+        let label = document.createElement('span');
+        label.innerHTML = "play example:&nbsp";
+        container.appendChild(label);
+        container.appendChild(audioTextUI.createPlayer(rowsExamplePlayer));
+    }
+}
+
 function clearFilterUI() {
-    clearElement('filter');
-    return document.getElementById('filter');
+    return clearElement('filter');
 }
 
 function loadFile(ctx) {

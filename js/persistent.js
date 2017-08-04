@@ -6,7 +6,7 @@ PersistentObject = function() {
 
     this.setName = function(name) {
         __name = name;
-    }
+    };
 
     this.setInitFunc = function(init_fn) {
         __init_fn = init_fn;
