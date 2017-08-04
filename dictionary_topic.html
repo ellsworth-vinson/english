@@ -25,7 +25,7 @@
     <div class="ctl"><span>scroll:</span><input type="checkbox" id="scrollid" onclick="repaintScroll()"></div>
     <div class="ctl"><span>example:</span><input type="checkbox" id="exampleid" onclick="repaintExample()"></div>
     <div class="ctl" id="example_player_id" style="padding-top: 5px"></div>
-    <div class="ctl"><span>sort:&nbsp;</span><select id="sortid" onclick="recreate()">
+    <div class="ctl"><span>sort:&nbsp;</span><select id="sortid" onchange="recreate()">
         <option value="0">none</option>
         <option value="1">asc</option>
         <option value="2">desc</option>
@@ -34,7 +34,7 @@
         <option value="5">random</option>
     </select>
     </div>
-    <div class="ctl"><span>delay:&nbsp;</span><select id="delayid" onclick="repaintDelay()">
+    <div class="ctl"><span>delay:&nbsp;</span><select id="delayid" onchange="repaintDelay()">
         <option value="0">0 sec</option>
         <option value="1">1 sec</option>
         <option value="2">2 sec</option>
