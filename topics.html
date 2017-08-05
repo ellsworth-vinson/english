@@ -3,13 +3,15 @@
   <meta charset="UTF-8">
   <title>Title</title>
   <style>
-    span {
+    span.t {
       text-decoration: underline;
       cursor: hand;
     }
   </style>
   <!--<script type="text/javascript" src="js/persistent.js?q=1"></script>-->
+  <!--<script type="text/javascript" src="js/identity.js?q=1"></script>-->
   <script type="text/javascript" src="http://rawgit.com/ellsworth-vinson/english/master/js/persistent.js?q=1"></script>
+  <script type="text/javascript" src="http://rawgit.com/ellsworth-vinson/english/master/js/identity.js?q=1"></script>
   <script type="text/javascript">
       function go1() {
           localStorage.removeItem("topics.html");
@@ -29,21 +31,17 @@
 
       document.onreadystatechange = function () {
           if (document.readyState == "complete") {
-            let el = document.getElementById("identity");
-            el.value = IDENTITY.get().identity;
+              new IdentityUIHelper(document.getElementById('identity'));
+              IdentitySingleton.getInstance().addListener(function () {
+                  alert(IdentitySingleton.getInstance().getCurrent());
+              });
           }
       };
-      function changeid() {
-          let el = document.getElementById("identity");
-          IDENTITY.get().identity = el.value;
-          IDENTITY.save();
-      }
   </script>
 </head>
 <body>
-<div align="left">
-  <span>Identity:</span><input type="text" id="identity" maxlength="50">
-  <button onclick="changeid()">Save</button>
+<div id="identity" align="left">
+  <span>Identity</span>
 </div>
 
 <h2 align="center">English topics</h2>
@@ -53,13 +51,13 @@
     <th>Name</th>
   </tr>
   <tr>
-    <td><span onclick="go1()">Longman</span></td>
+    <td><span class="t" onclick="go1()">Longman</span></td>
   </tr>
   <tr>
-    <td><span onclick="go2()">Литвинов. Тематический словарь-минимум 3000</span></td>
+    <td><span class="t" onclick="go2()">Литвинов. Тематический словарь-минимум 3000</span></td>
   </tr>
   <tr>
-    <td><span onclick="go5()">My dictionary</span></td>
+    <td><span class="t" onclick="go5()">My dictionary</span></td>
   </tr>
 </table>
 </body>

@@ -7,6 +7,7 @@
     <script type="text/javascript" src="http://rawgit.com/ellsworth-vinson/english/master/js/ui.js?q=1"></script>
     <script type="text/javascript"  src="http://rawgit.com/ellsworth-vinson/english/master/js/dictionary.js?q=1"></script>
     <script type="text/javascript"  src="http://rawgit.com/ellsworth-vinson/english/master/js/dictionary.js?q=1"></script>
+    <script type="text/javascript" src="http://rawgit.com/ellsworth-vinson/english/master/js/identity.js?q=1"></script>
     <link rel="stylesheet" type="text/css" href="http://rawgit.com/ellsworth-vinson/english/master/css/view.css?q=1">
 
     <!--<script type="text/javascript" src="js/persistent.js?q=1"></script>-->
@@ -14,6 +15,7 @@
     <!--<script type="text/javascript" src="js/ui.js?q=1"></script>-->
     <!--<script type="text/javascript"  src="js/dictionary.js?q=1"></script>-->
     <!--<script type="text/javascript"  src="js/dictionary.js?q=1"></script>-->
+    <!--<script type="text/javascript" src="js/identity.js?q=1"></script>-->
     <!--<link rel="stylesheet" type="text/css" href="css/view.css?q=1">-->
 </head>
 <body>
@@ -58,6 +60,9 @@
         <input id="pageid" type="button" onclick="minMax(this)" mode="min" value="Max">
     </div>
     <div class="ctl" style="display: block; padding: 5px" align="right">
+        <div id="identity" style="display: inline">
+            <span>Identity</span>
+        </div>
         &nbsp;&nbsp;&nbsp;topic:
         <select id="topicid" onchange="recreate()"></select>
     </div>
@@ -80,12 +85,28 @@
             let playStartImg = "https://raw.githubusercontent.com/ellsworth-vinson/english/master/img/play-start.png";
             let playStopImg = "https://raw.githubusercontent.com/ellsworth-vinson/english/master/img/play-stop.png";
 
-            var dictionary_url = localStorage.getItem("topics.html");
-            SettingsSingleton.getInstance().setName('settings_dictionary_' + dictionary_url + "_" + IDENTITY.get().identity);
-            DataSingleton.getInstance().setName('data_dictionary_' + dictionary_url + "_" + IDENTITY.get().identity);
+            let dictionary_url = localStorage.getItem("topics.html");
+            //localStorage.setItem("topics.html", 'https://raw.githubusercontent.com/ellsworth-vinson/audio/master/dictionary/litvinov.3000.json');
             console.log(dictionary_url);
-            //var dictionary_url = decodeURIComponent(window.location.href.slice(window.location.href.indexOf('?') + 1));
-            //dictionary_url = 'https://raw.githubusercontent.com/ellsworth-vinson/audio/master/dictionary/litvinov.3000.json';
+
+            new IdentityUIHelper(document.getElementById('identity'));
+            IdentitySingleton.getInstance().addListener(function (id) {
+                let identity = IdentitySingleton.getInstance().getCurrent();
+                if (isAssigned(id)) {
+                    SettingsSingleton.getInstance().deleteByName();
+                    DataSingleton.getInstance().deleteByName();
+                }
+                SettingsSingleton.getInstance().setName('settings_dictionary_' + dictionary_url + "_" + identity);
+                DataSingleton.getInstance().setName('data_dictionary_' + dictionary_url + "_" + identity);
+                SettingsSingleton.getInstance().reset();
+                DataSingleton.getInstance().reset();
+                initControls();
+                createPageNavigation();
+                recreate();
+            });
+            let identity = IdentitySingleton.getInstance().getCurrent();
+            SettingsSingleton.getInstance().setName('settings_dictionary_' + dictionary_url + "_" + identity);
+            DataSingleton.getInstance().setName('data_dictionary_' + dictionary_url + "_" + identity);
             UITools.showLoading();
             SettingsSingleton.getInstance().get().mode = document.getElementById('modeid').getAttribute('mode');
             SettingsSingleton.getInstance().save();

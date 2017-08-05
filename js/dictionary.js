@@ -39,8 +39,8 @@ const DataSingleton = (function () {
         isSelected: function(eng, notUseFilter2) {
             let datas = DataSingleton.getInstance().get();
             if (notUseFilter2 === undefined) notUseFilter2 = false;
-            let skipFilter2 = (!isAssignedProp(datas, 'filter2') || Object.keys(datas.filter2).length === 0)
-                || (notUseFilter2 !== undefined && notUseFilter2 != null && notUseFilter2);
+            let skipFilter2 = (isAssigned(notUseFilter2) && notUseFilter2)
+                || (!isAssignedProp(datas, 'filter2') || Object.keys(datas.filter2).length === 0);
             return skipFilter2
                 ? datas.filter1 !== undefined && datas.filter1.hasOwnProperty(eng) && datas.filter1[eng] === true
                 : !datas.filter2.hasOwnProperty(eng);
@@ -553,21 +553,6 @@ function fillFilter2UI() {
     }
 }
 
-function fillFilter2(ctx) {
-    if (__filterUI !== undefined && __filterUI !== null) {
-        let filter = __filterUI.value;
-        if (filter !== undefined && filter !== null) {
-            let texts = filter.split('\n');
-            if (texts.length === 0 || texts[0] === '')
-                ctx.filter2 = {};
-            else
-                texts.forEach(function (txt) {
-                    ctx.filter2[txt] = true;
-                });
-        }
-    }
-}
-
 SettingsSingleton.getInstance().setName('settings_dictionary');
 SettingsSingleton.getInstance().setInitFunc(createSettings);
 
@@ -581,10 +566,19 @@ DataSingleton.getInstance().setInitFunc(function (data) {
     let selRows = {};
     rows.forEach(function (c) {
         let tx = c.cols[0].tx;
-        selRows[tx] = c.sel !== undefined && c.sel || getValueOfProp(selRows, tx, false);
-        dataCtn.filter1[c.cols[0].tx] = selRows[tx];
+        selRows[tx] = getValueOfProp(c, 'sel', false) || getValueOfProp(selRows, tx, false);
+        dataCtn.filter1[tx] = selRows[tx];
     });
-    fillFilter2(dataCtn);
+    if (__filterUI !== undefined && __filterUI !== null) {
+        if (isAssigned(__filterUI.value)) {
+            let texts = __filterUI.value.split('\n');
+            dataCtn.filter2 = {};
+            if (!(texts.length === 0 || texts[0] === ''))
+                texts.forEach(function (txt) {
+                    dataCtn.filter2[txt] = true;
+                });
+        }
+    }
     return dataCtn;
 });
 

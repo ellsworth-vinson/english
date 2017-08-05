@@ -26,25 +26,45 @@ PersistentObject = function() {
         return self;
     };
 
+    this.deleteByName = function() {
+        saveInLocalStorage(__name, undefined);
+    };
+
     this.get = function() {
-        if (__data === null) __data = getFromLocalStorage(__name);
-        if (!check(__data)) {
+        if (__data === null)
+            try {
+                __data = getFromLocalStorage(__name);
+            } catch (ex) {
+                console.log(ex);
+                __data = undefined;
+            }
+        if (!self.check(__data)) {
             self.recreate();
         }
         return __data;
+    };
+
+    this.reset = function () {
+        __data = null;
+        let data = self.get();
+        data['id'] = __name;
+        self.save();
     };
 
     this.save = function () {
         saveInLocalStorage(__name, JSON.stringify(self.get()));
     };
 
-    let check = function (data) {
-        return data !== null && data['id'] !== undefined && data.id === __name;
+    this.check = function (data) {
+        return data !== undefined && data !== null && data['id'] !== undefined && data.id === __name;
     };
 
     let saveInLocalStorage = function(key, value) {
         if (typeof(Storage) !== "undefined") {
-            localStorage.setItem(key, typeof value === 'string' ? value : JSON.stringify(value))
+            if (value === undefined || value === null)
+                localStorage.removeItem(key);
+            else
+                localStorage.setItem(key, typeof value === 'string' ? value : JSON.stringify(value))
         } else {
             console.log("Sorry! No Web Storage support..");
         }
@@ -52,16 +72,11 @@ PersistentObject = function() {
 
     let getFromLocalStorage = function(key) {
         if (typeof(Storage) !== "undefined") {
-            return JSON.parse(localStorage.getItem(key));
+            let result = localStorage.getItem(key);
+            return result === undefined || result === null ? undefined : JSON.parse(result);
         } else {
             console.log("Sorry! No Web Storage support..");
             return null;
         }
     }
 };
-
-const IDENTITY = new PersistentObject();
-IDENTITY.setName("https://github.com/ellsworth-vinson/english");
-IDENTITY.setInitFunc(function (data) {
-    return (data === undefined || data === null) ? { identity: '' } : data;
-});
