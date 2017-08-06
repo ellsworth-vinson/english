@@ -42,7 +42,7 @@ const DataSingleton = (function () {
             let skipFilter2 = (isAssigned(notUseFilter2) && notUseFilter2)
                 || (!isAssignedProp(datas, 'filter2') || Object.keys(datas.filter2).length === 0);
             return skipFilter2
-                ? datas.filter1 !== undefined && datas.filter1.hasOwnProperty(eng) && datas.filter1[eng] === true
+                ? getValueOfProp(datas.filter1, eng, false)
                 : !datas.filter2.hasOwnProperty(eng);
         }
     };

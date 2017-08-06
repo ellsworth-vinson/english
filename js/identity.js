@@ -116,8 +116,8 @@ IdentityUIHelper = function (el) {
         saveEl.innerHTML = 'Save';
         //el.appendChild(saveEl);
 
-        delEl = document.createElement('button');
-        delEl.innerHTML = 'Delete';
+        delEl = document.createElement('img');
+        delEl.className = 'del';
         delEl.onclick = function () {
             del();
         };
