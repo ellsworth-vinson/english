@@ -119,7 +119,7 @@ IdentityUIHelper = function (el) {
         delEl = document.createElement('img');
         delEl.className = 'del';
         delEl.onclick = function () {
-            del();
+            if (window.confirm("Do you want to delete id?")) del();
         };
         el.appendChild(delEl);
     };
