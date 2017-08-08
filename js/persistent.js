@@ -155,7 +155,7 @@ StorageHelper = function () {
     };
 
     var writeFile = function(blob, url, callback) {
-        window.requestFileSystem(window.TEMPORARY, blob.size, function (fs) {
+        window.requestFileSystem(window.PERSISTENT, blob.size, function (fs) {
             fs.root.getFile(url, { create: true }, function (fileEntry) {
                 fileEntry.createWriter((fileWriter)=>fileWriter.truncate(0));
                 fileEntry.createWriter(function (fileWriter) {
@@ -174,7 +174,7 @@ StorageHelper = function () {
     };
 
     var removeFile = function (fn, callback) {
-        window.requestFileSystem(window.TEMPORARY, 0, function (fs) {
+        window.requestFileSystem(window.PERSISTENT, 0, function (fs) {
             fs.root.getFile(fn, { create: true }, function (fileEntry) {
                 fileEntry.remove(function() {
                     callback(fn);
@@ -185,7 +185,7 @@ StorageHelper = function () {
     };
 
     var readUrl = function (fn, callback) {
-        window.requestFileSystem(window.TEMPORARY, 0, function (fs) {
+        window.requestFileSystem(window.PERSISTENT, 0, function (fs) {
             fs.root.getFile(fn, { create: false }, function (fileEntry) {
                 callback(fileEntry.toURL());
             }, function (err) {
@@ -196,7 +196,7 @@ StorageHelper = function () {
     }
 
     var readFile = function (fn, callback) {
-        window.requestFileSystem(window.TEMPORARY, 0, function (fs) {
+        window.requestFileSystem(window.PERSISTENT, 0, function (fs) {
             fs.root.getFile(fn, { create: false }, function (fileEntry) {
                 fileEntry.file(function (file) {
                     var reader = new FileReader();
