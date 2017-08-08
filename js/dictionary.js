@@ -210,6 +210,7 @@ function loadPage(urls, extImg, collImg, playStartImg, playStopImg, callback) {
         }
 
         if (isLoaded) {
+            createLocalStorage();
             clearInterval(intervalid);
             createTopic(urls.lines);
             createUI();
@@ -218,6 +219,11 @@ function loadPage(urls, extImg, collImg, playStartImg, playStopImg, callback) {
             callback();
         }
     }, 1000);
+}
+
+function createLocalStorage() {
+    let fh = new StorageHelper();
+    fh.createUI(document.getElementById('storageid'));
 }
 
 function createTopic(ctxs) {

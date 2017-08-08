@@ -10,7 +10,7 @@
     <script type="text/javascript" src="http://rawgit.com/ellsworth-vinson/english/master/js/identity.js?q=1"></script>
     <link rel="stylesheet" type="text/css" href="http://rawgit.com/ellsworth-vinson/english/master/css/view.css?q=1">
 
-    <!--<script type="text/javascript" src="js/persistent.js?q=1"></script>-->
+    <!--<script type="text/javascript" src="js/persistent.js?q=2"></script>-->
     <!--<script type="text/javascript" src="js/sound.js?q=1"></script>-->
     <!--<script type="text/javascript" src="js/ui.js?q=1"></script>-->
     <!--<script type="text/javascript"  src="js/dictionary.js?q=1"></script>-->
@@ -60,6 +60,7 @@
         <input id="pageid" type="button" onclick="minMax(this)" mode="min" value="Max">
     </div>
     <div class="ctl" style="display: block; padding: 5px" align="right">
+        <div class="ctl" id="storageid" style="display: inline; padding: 5px" align="left"></div>
         <div id="identity" style="display: inline">
             <span>Identity</span>
         </div>
@@ -71,7 +72,12 @@
 <div id="filter" style="display: none"></div>
 <div id="container"></div>
 <a href="http://htmlpreview.github.io/?https://github.com/ellsworth-vinson/english/blob/master/topics.html"><--</a>
+<audio controls id="audioid"></audio>
 <script>
+    //storage.loadFile('http://rawgit.com/ellsworth-vinson/audio/master/dictionary/longman/longman.am.aac')
+    //storage.loadFile('https://github.com/ellsworth-vinson/audio/blob/master/dictionary/litvinov.3000/litvinov.3000.am.aac?raw=true')
+
+
     function minMax(el) {
         let min = el.getAttribute('mode').localeCompare('min') == 0 ? true : false;
         el.setAttribute('mode', min ? 'max' : 'min');
@@ -80,6 +86,14 @@
     }
     document.onreadystatechange = function () {
         if (document.readyState == "complete") {
+            let storage = new StorageHelper();
+            storage.loadFile('https://raw.githubusercontent.com/ellsworth-vinson/audio/master/dictionary/litvinov.3000/litvinov.3000.am.aac',
+                function (result) {
+                    let el = document.getElementById('audioid');
+                    el.src = result.data;
+                }
+            );
+
             let extImg = "https://raw.githubusercontent.com/ellsworth-vinson/english/master/img/plus.png";
             let collImg = "https://raw.githubusercontent.com/ellsworth-vinson/english/master/img/minus.png";
             let playStartImg = "https://raw.githubusercontent.com/ellsworth-vinson/english/master/img/play-start.png";
