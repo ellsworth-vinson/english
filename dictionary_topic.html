@@ -87,7 +87,7 @@
     document.onreadystatechange = function () {
         if (document.readyState == "complete") {
             let storage = new StorageHelper();
-            storage.loadFile('https://raw.githubusercontent.com/ellsworth-vinson/audio/master/dictionary/litvinov.3000/litvinov.3000.am.aac',
+            storage.loadFile('https://raw.githubusercontent.com/ellsworth-vinson/audio/master/dictionary/longman/longman.br.aac',
                 function (result) {
                     let el = document.getElementById('audioid');
                     el.src = result.data;
