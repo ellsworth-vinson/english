@@ -44,3 +44,10 @@ img.del {
     z-index: 9999;
     background: url("https://raw.githubusercontent.com/ellsworth-vinson/english/master/img/loading.gif") no-repeat center center rgba(255, 255, 255, 0.25)
 }
+
+/*progress {*/
+    /*background-color: #f3f3f3;*/
+    /*border: 0;*/
+    /*height: 18px;*/
+    /*border-radius: 9px;*/
+/*}*/

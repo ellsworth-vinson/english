@@ -44,7 +44,7 @@ PersistentObject = function() {
         return __data;
     };
 
-    this.reset = function () {
+    this.resetProgressBar = function () {
         __data = null;
         let data = self.get();
         data['id'] = __name;
@@ -81,143 +81,223 @@ PersistentObject = function() {
     }
 };
 
-StorageHelper = function () {
-    var __isLocation = true;
+StoreHelper = function () {
+    let self = this;
+    let __isLocationFileSystem = false;
+    let __fs;
+    let PROGRESS_CONTEXT = {
+        urls: {},
+        resetProgressBar: function () {
+            PROGRESS_CONTEXT.urls = {};
+        }
+    };
+    let FILE_CONTEXT = {};
 
     window.requestFileSystem  = window.requestFileSystem || window.webkitRequestFileSystem;
+    window.resolveLocalFileSystemURL = window.resolveLocalFileSystemURL || window.webkitResolveLocalFileSystemURL;
     if (window.File && window.FileReader && window.FileList && window.Blob) {
     } else {
         alert('The File APIs are not fully supported in this browser.');
     }
 
-    this.setLocation = function(isLocation) {
-        __isLocation = isLocation;
-    }
-
-
-    this.createUI = function (rootUIEl) {
-        let span = document.createElement('span');
-        span.innerHTML = 'File storage:';
-        rootUIEl.appendChild(span);
-        let use = document.createElement('input');
-        use.type = 'checkbox';
-        use.innerHTML = 'use';
-        rootUIEl.appendChild(use);
-
-    }
-
-    this.loadFile = function (url, callback) {
-        if (__isLocation) {
-            let fileName = fixedEncodeURIComponent(url);
-            readUrl(fileName, function (locallyUrl, err) {
-                if (err === DOMException.NOT_FOUND_ERR) {
-                    downloadFile(url, function (blob) {
-                        writeFile(blob, fileName, function (err) {
-                            if (err !== DOMException.NOT_FOUND_ERR) {
-                                readUrl(fileName, function (locallyUrl, err) {
-                                    callback({data: locallyUrl, err: err});
-                                });
-                            } else callback({err: err});
-                        });
-                    });
-                } else {
-                    callback({data: locallyUrl, err: err});
-                }
-            });
-        } else {
-            callback({data: url});
+    let createFileSystem = function(callback) {
+        if (__fs) {
+            callback(__fs);
+            return;
         }
-    };
 
-    this.loadText = function (url, callback) {
-        if (__isLocation) {
-            let fileName = fixedEncodeURIComponent(url);
-            readFile(fileName, function (text, err) {
-                if (err === DOMException.NOT_FOUND_ERR) {
-                    downloadFile(url, function (blob) {
-                        writeFile(blob, fileName, function (err) {
-                            if (err !== DOMException.NOT_FOUND_ERR) {
-                                readFile(fileName, function (text, err) {
-                                    callback({data: text, err: err});
-                                });
-                            } else callback({data: text, err: err});
-                        });
-                    });
-                } else {
-                    callback({data: text, err: err});
-                }
-            });
-        } else {
-            send(url, 'GET', function (text) {
-                callback({data: text});
-            });
-        }
-    };
-
-    var writeFile = function(blob, url, callback) {
-        window.requestFileSystem(window.PERSISTENT, blob.size, function (fs) {
-            fs.root.getFile(url, { create: true }, function (fileEntry) {
-                fileEntry.createWriter((fileWriter)=>fileWriter.truncate(0));
-                fileEntry.createWriter(function (fileWriter) {
-                    fileWriter.onwriteend = function(e) {
-                        if (callback !== undefined) callback();
-                    };
-                    fileWriter.seek(0);
-                    fileWriter.write(blob);
+        navigator.webkitTemporaryStorage.queryUsageAndQuota (
+            function(usedBytes, grantedBytes) {
+                //console.log('usedBytes: ', usedBytes, ' of ', grantedBytes, 'bytes');
+                window.requestFileSystem(TEMPORARY, grantedBytes, function (filesystem) {
+                    __fs = filesystem;
+                    callback(__fs);
                 }, function (err) {
-                    callback(err.code);
+                    callback();
+                    console.log('error: ' + err);
                 });
-            }, function (err) {
-                callback(err.code);
-            });
-        });
+            },
+            function(e) { console.log('Error', e);  }
+        );
     };
 
-    var removeFile = function (fn, callback) {
-        window.requestFileSystem(window.PERSISTENT, 0, function (fs) {
-            fs.root.getFile(fn, { create: true }, function (fileEntry) {
-                fileEntry.remove(function() {
-                    callback(fn);
-                    console.log('File removed.');
-                }, errorHandler);
+    let getFileContext = function(url) {
+        if (!FILE_CONTEXT[url]) {
+            FILE_CONTEXT[url] = {
+                pathListener: [],
+                textListener: [],
+                text: undefined,
+                path: undefined
+            };
+        }
+        return FILE_CONTEXT[url];
+    };
+
+    this.init = function (callback) {
+        createFileSystem(function (fs) {
+            if (fs) callback();
+        })
+    };
+
+    this.resetProgressBar = function () {
+        PROGRESS_CONTEXT.resetProgressBar();
+        let el =  document.getElementById('progressbar');
+        el.style.display = 'none';
+        el.setAttribute('value', '0');
+        el.setAttribute('max', '0');
+    };
+    
+    this.useLocationFileSystem = function(value) {
+        __isLocationFileSystem = value === undefined || value === null ? false : value;
+    }
+
+    let pathNotify = function (ctx) {
+        for (let i in ctx.pathListener) {
+            ctx.pathListener[i](ctx.path);
+        }
+        ctx.pathListener = [];
+    };
+
+    let textNotify = function (ctx) {
+        for (let i in ctx.textListener) {
+            ctx.textListener[i](ctx.text);
+        }
+        ctx.textListener = [];
+    };
+
+    this.getPath = function (url, callback) {
+        if (__isLocationFileSystem) {
+            let normalUrl = fixedEncodeURIComponent(url);
+            let ctx = getFileContext(normalUrl);
+            if (ctx.path) {
+                callback(ctx.path);
+                return;
+            }
+            if (ctx.pathListener.length > 0) {
+                ctx.pathListener.push(callback);
+                return;
+            }
+            ctx.pathListener.push(callback);
+            readPath(normalUrl, function (filePath) {
+                if (!filePath) {
+                    downloadFile(url, function (blob) {
+                        writeFile(blob, normalUrl, function (path) {
+                            ctx.path = path;
+                            pathNotify(ctx);
+                        });
+                    });
+                } else {
+                    ctx.path = filePath;
+                    pathNotify(ctx);
+                }
+            });
+        } else {
+            callback(url);
+        }
+    };
+
+    this.getText = function (url, callback) {
+        if (__isLocationFileSystem) {
+            let normalUrl = fixedEncodeURIComponent(url);
+            let ctx = getFileContext(normalUrl);
+            if (ctx.text) {
+                callback(ctx.text);
+                return;
+            }
+            if (!ctx.path) {
+                this.getPath(url, function () {
+                    self.getText(url, callback);
+                });
+                return;
+            }
+            if (ctx.textListener.length > 0) {
+                ctx.textListener.push(callback);
+                return;
+            }
+            ctx.textListener.push(callback);
+            readText(normalUrl, function (text) {
+                ctx.text = text;
+                textNotify(ctx);
+            });
+        } else {
+            loadText(url, function (text) {
+                callback(text);
+            });
+        }
+    };
+
+    this.purge = function(callback) {
+        createFileSystem(function (fs) {
+            var dirReader = fs.root.createReader();
+            dirReader.readEntries(function (entries) {
+                for (var i = 0, entry; entry = entries[i]; ++i) {
+                    if (entry.isDirectory) {
+                        entry.removeRecursively(function () {}, errorHandler);
+                    } else {
+                        entry.remove(function () {
+                        }, errorHandler);
+                    }
+                }
+                if (callback) callback();
+                console.log('Local storage emptied.');
             }, errorHandler);
         });
     };
 
-    var readUrl = function (fn, callback) {
-        window.requestFileSystem(window.PERSISTENT, 0, function (fs) {
-            fs.root.getFile(fn, { create: false }, function (fileEntry) {
-                callback(fileEntry.toURL());
+    let writeFile = function(blob, filePath, callback) {
+        createFileSystem(function (fs) {
+            fs.root.getFile(filePath, { create: true }, function (fileEntry) {
+                fileEntry.createWriter((fileWriter)=>fileWriter.truncate(0));
+                fileEntry.createWriter(function (fileWriter) {
+                    fileWriter.onwriteend = function() {
+                        if (callback !== undefined) callback(fileEntry.toURL());
+                    };
+                    fileWriter.seek(0);
+                    fileWriter.write(blob);
+                }, function (err) {
+                    errorHandler(err);
+                });
             }, function (err) {
-                callback(null, err.code);
+                errorHandler(err);
             });
         });
+    };
 
+    let readPath = function (filePath, callback) {
+        createFileSystem(function (fs) {
+            if (!fs) callback(null, new DOMException('The filesystem is undefined'));
+            fs.root.getFile(filePath, { create: false }, function (fileEntry) {
+                callback(fileEntry.toURL());
+            }, function (err) {
+                errorHandler(err);
+                if (err.code === DOMException.NOT_FOUND_ERR) callback(undefined);
+            });
+        });
     }
 
-    var readFile = function (fn, callback) {
-        window.requestFileSystem(window.PERSISTENT, 0, function (fs) {
+    let readText = function (fn, callback) {
+        createFileSystem(function (fs) {
+            if (!fs) callback(null, new DOMException('the filesystem is undefined'));
             fs.root.getFile(fn, { create: false }, function (fileEntry) {
                 fileEntry.file(function (file) {
-                    var reader = new FileReader();
-                    reader.onloadend = function (evt) {
-                        if (callback !== undefined) callback(this.result);
+                    let reader = new FileReader();
+                    reader.onloadend = function () {
+                        if (callback) callback(this.result);
                     };
                     reader.readAsText(file);
                 }, function (err) {
-                    callback(null, err.code);
+                    errorHandler(err);
                 });
 
             }, function (err) {
-                callback(null, err.code);
+                errorHandler(err);
             });
         });
 
     };
 
-    var errorHandler = function(e) {
+    let errorHandler = function(e) {
         var msg = '';
-
         switch (e.code) {
             case DOMException.QUOTA_EXCEEDED_ERR:
                 msg = 'QUOTA_EXCEEDED_ERR';
@@ -237,60 +317,88 @@ StorageHelper = function () {
             default:
                 msg = e;
                 break;
-        };
-
+        }
         console.log('Error: ' + msg);
+    };
+
+    let downloadFile = function(url, success) {
+        var http = getHTTPObject();
+        http.open('GET', url, true);
+        http.responseType = 'blob';
+        http.onprogress = function(event) {
+            let ctx = PROGRESS_CONTEXT.urls[url];
+            ctx.l = event.loaded;
+            ctx.t = event.total;
+            let loaded = 0;
+            let total = 0;
+            for (let u in PROGRESS_CONTEXT.urls) {
+                loaded += parseInt(PROGRESS_CONTEXT.urls[u].l);
+                total += parseInt(PROGRESS_CONTEXT.urls[u].t);
+            }
+            let el =  document.getElementById('progressbar');
+            el.setAttribute('value', loaded > total ? 0 : loaded);
+            el.setAttribute('max', total);
+            el.style.display = 'block';
+            //console.log( 'Загружено на сервер ' + loaded + ' байт из ' + total );
+        };
+        http.onloadstart = function () {
+            if (!PROGRESS_CONTEXT.urls[url]) {
+                PROGRESS_CONTEXT.urls[url] = {l: 0, t: 0};
+            }
+        };
+        http.onreadystatechange = function () {
+            if (http.readyState == 4 && http.status == 200) {
+                if (success) success(http.response);
+            }
+        };
+        http.send();
+    };
+
+    function loadText(query, callback) {
+        var http = getHTTPObject();
+        http.overrideMimeType("application/json");
+        http.open('GET', query, true);
+        http.onreadystatechange = function () {
+            if (http.readyState == 4 && http.status == "200") {
+                callback(http.responseText);
+            }
+        }
+        http.send();
+    }
+
+    let fixedEncodeURIComponent = function(str) {
+        return encodeURIComponent(str).replace(/[!'():*]/g, function(c) {
+            return '%' + c.charCodeAt(0).toString(16);
+        });
+    };
+
+    let getHTTPObject = function() {
+        if (typeof XMLHttpRequest !== 'undefined') {
+            return new XMLHttpRequest();
+        } try {
+            return new ActiveXObject("Msxml2.XMLHTTP");
+        } catch (e) {
+            try {
+                return new ActiveXObject("Microsoft.XMLHTTP");
+            } catch (e) {}
+        }
+        return false;
     }
 };
 
-function getHTTPObject() {
-    if (typeof XMLHttpRequest != 'undefined') {
-        return new XMLHttpRequest();
-    } try {
-        return new ActiveXObject("Msxml2.XMLHTTP");
-    } catch (e) {
-        try {
-            return new ActiveXObject("Microsoft.XMLHTTP");
-        } catch (e) {}
-    }
-    return false;
-}
+const StoreSingleton = (function () {
+    let instance;
 
-//method is GET or POST
-function send(query, method, callback, data) {
-    var http = getHTTPObject();
-    http.overrideMimeType("application/json");
-    http.open(method, query, true);
-    http.onreadystatechange = function () {
-        if (http.readyState == 4 && http.status == "200") {
-            try {
-                //let jsonresponse = JSON.parse(http.responseText);
-                callback(http.responseText);
-            } catch (ex) {
-                callback({});
+    function createInstance() {
+        return new StoreHelper();
+    }
+
+    return {
+        getInstance: function () {
+            if (!instance) {
+                instance = createInstance();
             }
-        }
-    }
-    if (typeof data === 'string')
-        http.send(data);
-    else
-        http.send();
-}
-
-function downloadFile(url, success) {
-    var http = getHTTPObject();
-    http.open('GET', url, true);
-    http.responseType = 'blob';
-    http.onreadystatechange = function () {
-        if (http.readyState == 4 && http.status == 200) {
-            if (success) success(http.response);
+            return instance;
         }
     };
-    http.send(null);
-}
-
-function fixedEncodeURIComponent (str) {
-    return encodeURIComponent(str).replace(/[!'():*]/g, function(c) {
-        return '%' + c.charCodeAt(0).toString(16);
-    });
-}
+})();

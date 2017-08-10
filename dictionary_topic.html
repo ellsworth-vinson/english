@@ -6,14 +6,12 @@
     <script type="text/javascript" src="http://rawgit.com/ellsworth-vinson/english/master/js/sound.js?q=1"></script>
     <script type="text/javascript" src="http://rawgit.com/ellsworth-vinson/english/master/js/ui.js?q=1"></script>
     <script type="text/javascript"  src="http://rawgit.com/ellsworth-vinson/english/master/js/dictionary.js?q=1"></script>
-    <script type="text/javascript"  src="http://rawgit.com/ellsworth-vinson/english/master/js/dictionary.js?q=1"></script>
     <script type="text/javascript" src="http://rawgit.com/ellsworth-vinson/english/master/js/identity.js?q=1"></script>
     <link rel="stylesheet" type="text/css" href="http://rawgit.com/ellsworth-vinson/english/master/css/view.css?q=1">
 
-    <!--<script type="text/javascript" src="js/persistent.js?q=2"></script>-->
+    <!--<script type="text/javascript" src="js/persistent.js?q=1"></script>-->
     <!--<script type="text/javascript" src="js/sound.js?q=1"></script>-->
     <!--<script type="text/javascript" src="js/ui.js?q=1"></script>-->
-    <!--<script type="text/javascript"  src="js/dictionary.js?q=1"></script>-->
     <!--<script type="text/javascript"  src="js/dictionary.js?q=1"></script>-->
     <!--<script type="text/javascript" src="js/identity.js?q=1"></script>-->
     <!--<link rel="stylesheet" type="text/css" href="css/view.css?q=1">-->
@@ -60,7 +58,11 @@
         <input id="pageid" type="button" onclick="minMax(this)" mode="min" value="Max">
     </div>
     <div class="ctl" style="display: block; padding: 5px" align="right">
-        <div class="ctl" id="storageid" style="display: inline; padding: 5px" align="left"></div>
+        <div class="ctl" style="display: inline; padding: 5px" align="left">
+            <span>File storage:</span>
+            <input type="checkbox" id="selstorageid" onchange="reloadHtml()">
+            <img id='actstorageid' class="del"></img>
+        </div>
         <div id="identity" style="display: inline">
             <span>Identity</span>
         </div>
@@ -70,14 +72,12 @@
     <div id="navigateid" class="ctl" align="center" style="display: block;max-height: 25px;overflow: auto" navigate=""></div>
 </div>
 <div id="filter" style="display: none"></div>
+<div class="ctl" align="center" style="display: block">
+    <progress id="progressbar" style="display: none" value="0" max="100"></progress>
+</div>
 <div id="container"></div>
 <a href="http://htmlpreview.github.io/?https://github.com/ellsworth-vinson/english/blob/master/topics.html"><--</a>
-<audio controls id="audioid"></audio>
 <script>
-    //storage.loadFile('http://rawgit.com/ellsworth-vinson/audio/master/dictionary/longman/longman.am.aac')
-    //storage.loadFile('https://github.com/ellsworth-vinson/audio/blob/master/dictionary/litvinov.3000/litvinov.3000.am.aac?raw=true')
-
-
     function minMax(el) {
         let min = el.getAttribute('mode').localeCompare('min') == 0 ? true : false;
         el.setAttribute('mode', min ? 'max' : 'min');
@@ -86,14 +86,6 @@
     }
     document.onreadystatechange = function () {
         if (document.readyState == "complete") {
-            let storage = new StorageHelper();
-            storage.loadFile('https://raw.githubusercontent.com/ellsworth-vinson/audio/master/dictionary/longman/longman.br.aac',
-                function (result) {
-                    let el = document.getElementById('audioid');
-                    el.src = result.data;
-                }
-            );
-
             let extImg = "https://raw.githubusercontent.com/ellsworth-vinson/english/master/img/plus.png";
             let collImg = "https://raw.githubusercontent.com/ellsworth-vinson/english/master/img/minus.png";
             let playStartImg = "https://raw.githubusercontent.com/ellsworth-vinson/english/master/img/play-start.png";
@@ -101,6 +93,7 @@
 
             let dictionary_url = localStorage.getItem("topics.html");
             //localStorage.setItem("topics.html", 'https://raw.githubusercontent.com/ellsworth-vinson/audio/master/dictionary/litvinov.3000.json');
+            //localStorage.setItem("topics.html", 'https://raw.githubusercontent.com/ellsworth-vinson/audio/master/dictionary/longman.json');
             console.log(dictionary_url);
 
             new IdentityUIHelper(document.getElementById('identity'));
@@ -112,8 +105,8 @@
                 }
                 SettingsSingleton.getInstance().setName('settings_dictionary_' + dictionary_url + "_" + identity);
                 DataSingleton.getInstance().setName('data_dictionary_' + dictionary_url + "_" + identity);
-                SettingsSingleton.getInstance().reset();
-                DataSingleton.getInstance().reset();
+                SettingsSingleton.getInstance().resetProgressBar();
+                DataSingleton.getInstance().resetProgressBar();
                 initControls();
                 createPageNavigation();
                 recreate();
@@ -124,11 +117,16 @@
             UITools.showLoading();
             SettingsSingleton.getInstance().get().mode = document.getElementById('modeid').getAttribute('mode');
             SettingsSingleton.getInstance().save();
+            StoreSingleton.getInstance().useLocationFileSystem(SettingsSingleton.getInstance().get().storage);
             initControls();
             loadJson(dictionary_url, function (response) {
-                loadPage(response, extImg, collImg, playStartImg, playStopImg, function () {
-                    UITools.hideLoading();
-                })
+                StoreSingleton.getInstance().init(function () {
+                    //StoreSingleton.getInstance().purge(function () {
+                    loadPage(response, extImg, collImg, playStartImg, playStopImg, function () {
+                        UITools.hideLoading();
+                    })
+                    //});
+                });
             });
         }
     }

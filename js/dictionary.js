@@ -65,9 +65,12 @@ const Context = function (data_sound_url, example_sound_url, data_url) {
     this.data_sound = null;
     this.example_sound = null;
     this.data = null;
+    this.data_sound_sound_url = null;
+    this.example_sound_sound_url = null;
 
     this.isLoaded = function () {
-        return this.data_sound !== null && this.example_sound !== null && this.data !== null;
+        return this.data_sound !== null && this.example_sound !== null && this.data !== null
+            && this.data_sound_sound_url !== null && this.example_sound_sound_url !== null;
     }
 };
 
@@ -79,9 +82,10 @@ function createPageNavigation() {
     clearElement(viewID);
     let allRows = ctx.data.lines.length;
     if (settings.mode === 'view') {
-        ctx.data.lines.forEach(function (l) {
+        for (let ind in ctx.data.lines) {
+            let l = ctx.data.lines[ind];
             if (l.sel || !getValueOfProp(l, '__display', true)) allRows--;
-        })
+        }
     }
     let count = Math.floor(allRows / settings.rows_of_page);
     if (allRows % settings.rows_of_page > 0) count++;
@@ -133,7 +137,8 @@ function createSettings() {
         delay: document.getElementById("delayid").selectedIndex,
         sort: document.getElementById("sortid").selectedIndex,
         scroll: document.getElementById("scrollid").checked,
-        example: document.getElementById("exampleid").checked
+        example: document.getElementById("exampleid").checked,
+        storage: document.getElementById("selstorageid").checked
     };
 }
 
@@ -166,6 +171,7 @@ function initControls() {
     document.getElementById("sortid").selectedIndex = settings.sort;
     document.getElementById("scrollid").checked = settings.scroll;
     document.getElementById("exampleid").checked = settings.example;
+    document.getElementById("selstorageid").checked = settings.storage;
 }
 
 function loadPage(urls, extImg, collImg, playStartImg, playStopImg, callback) {
@@ -175,6 +181,7 @@ function loadPage(urls, extImg, collImg, playStartImg, playStopImg, callback) {
     __playStopImg = playStopImg;
 
     let settings = SettingsSingleton.getInstance().get();
+    StoreSingleton.getInstance().resetProgressBar();
 
     for (let ctx in urls.lines) {
         if (!urls.lines.hasOwnProperty(ctx)) continue;
@@ -194,7 +201,7 @@ function loadPage(urls, extImg, collImg, playStartImg, playStopImg, callback) {
             if (settings.topic === undefined || settings.topic === "") {
                 settings.topic = ctx;
             }
-            console.log(c + "," + ctx);
+            //console.log(c + "," + ctx);
         }
     }
 
@@ -210,7 +217,8 @@ function loadPage(urls, extImg, collImg, playStartImg, playStopImg, callback) {
         }
 
         if (isLoaded) {
-            createLocalStorage();
+            StoreSingleton.getInstance().resetProgressBar();
+            bindUIStorage();
             clearInterval(intervalid);
             createTopic(urls.lines);
             createUI();
@@ -221,9 +229,14 @@ function loadPage(urls, extImg, collImg, playStartImg, playStopImg, callback) {
     }, 1000);
 }
 
-function createLocalStorage() {
-    let fh = new StorageHelper();
-    fh.createUI(document.getElementById('storageid'));
+function bindUIStorage() {
+    let el = document.getElementById('actstorageid');
+    el.onclick = function () {
+        if (window.confirm("Do you want to purge all files?")) {
+            StoreSingleton.getInstance().purge();
+            if (SettingsSingleton.getInstance().get().storage) reloadHtml();
+        }
+    };
 }
 
 function createTopic(ctxs) {
@@ -294,7 +307,8 @@ function createUI(arg) {
         .addCol({tx: '[eng]', tg: 'eng'})
         .addCol({tx: 'rus', tg: 'rus'})
         .toParent();
-    sortingLines.forEach(function (l) {
+    for (let ind in sortingLines) {
+        let l = sortingLines[ind];
         /** @namespace l.eng */
         /** @namespace l.rus */
 
@@ -342,7 +356,7 @@ function createUI(arg) {
             });
         }
         builder.toParent();
-    });
+    }
 
     let rootRow = builder.build();
     audioTextUI = new SpeakingTextUI('container', rootRow,
@@ -400,28 +414,36 @@ function loadFile(ctx) {
     if (isAssignedProp(__audioContextBuffer, ctx.data_sound_url)) {
         ctx.data_sound = __audioContextBuffer[ctx.data_sound_url];
     } else {
-        loadJson(ctx.data_sound_url, function (response) {
-            ctx.data_sound = response;
-            __audioContextBuffer[ctx.data_sound_url] = response;
+        StoreSingleton.getInstance().getText(ctx.data_sound_url, function (text) {
+            ctx.data_sound = JSON.parse(text);
+            __audioContextBuffer[ctx.data_sound_url] = ctx.data_sound;
+            StoreSingleton.getInstance().getPath(ctx.data_sound.sound_url, function (path) {
+                ctx.data_sound.sound_url = path;
+                ctx.data_sound_sound_url = path;
+            });
         });
     }
 
     if (isAssignedProp(__audioContextBuffer, ctx.example_sound)) {
         ctx.example_sound = __audioContextBuffer[ctx.example_sound];
     } else {
-        loadJson(ctx.example_sound_url, function (response) {
-            ctx.example_sound = response;
-            __audioContextBuffer[ctx.example_sound] = response;
+        StoreSingleton.getInstance().getText(ctx.example_sound_url, function (text) {
+            ctx.example_sound = JSON.parse(text);
+            __audioContextBuffer[ctx.example_sound] = ctx.example_sound;
+            StoreSingleton.getInstance().getPath(ctx.example_sound.sound_url, function (path) {
+                ctx.example_sound.sound_url = path;
+                ctx.example_sound_sound_url = path;
+            });
         });
     }
 
     if (isAssignedProp(__audioContextBuffer, ctx.data_url)) {
         ctx.data_url = __audioContextBuffer[ctx.data_url];
     } else {
-        loadJson(ctx.data_url, function (response) {
+        StoreSingleton.getInstance().getText(ctx.data_url, function (text) {
             /** @namespace ctx.data.lines */
-            ctx.data = response;
-            __audioContextBuffer[ctx.data_url] = response;
+            ctx.data = JSON.parse(text);
+            __audioContextBuffer[ctx.data_url] = ctx.data;
         });
     }
 }
@@ -498,6 +520,13 @@ function recreate() {
         createPageNavigation();
         repaint();
     });
+}
+
+function reloadHtml() {
+    SettingsSingleton.getInstance().recreate();
+    StoreSingleton.getInstance().useLocationFileSystem(SettingsSingleton.getInstance().get().storage);
+    SettingsSingleton.getInstance().save();
+    location.reload(true);
 }
 
 function save(el) {
