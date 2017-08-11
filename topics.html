@@ -28,6 +28,11 @@
           localStorage.setItem("topics.html", "https://raw.githubusercontent.com/ellsworth-vinson/audio/master/dictionary/mydictionary.json");
           window.location.href = "http://htmlpreview.github.io/?https://github.com/ellsworth-vinson/english/blob/master/dictionary_topic.html";
       }
+      function go6() {
+          localStorage.removeItem("topics.html");
+          localStorage.setItem("topics.html", "https://raw.githubusercontent.com/ellsworth-vinson/audio/master/dictionary/gerund.json");
+          window.location.href = "http://htmlpreview.github.io/?https://github.com/ellsworth-vinson/english/blob/master/dictionary_topic.html";
+      }
 
       document.onreadystatechange = function () {
           if (document.readyState == "complete") {
@@ -58,6 +63,9 @@
   </tr>
   <tr>
     <td><span class="t" onclick="go5()">My dictionary</span></td>
+  </tr>
+  <tr>
+    <td><span class="t" onclick="go6()">Gerund</span></td>
   </tr>
 </table>
 </body>
