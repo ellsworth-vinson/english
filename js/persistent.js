@@ -269,8 +269,10 @@ StoreHelper = function () {
             fs.root.getFile(filePath, { create: false }, function (fileEntry) {
                 callback(fileEntry.toURL());
             }, function (err) {
-                if (err.code === DOMException.NOT_FOUND_ERR) callback(undefined)
-                else errorHandler(err);
+                if (err.code === DOMException.NOT_FOUND_ERR)
+                    callback(undefined);
+                else
+                    errorHandler(err);
             });
         });
     }
