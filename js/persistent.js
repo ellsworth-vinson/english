@@ -265,7 +265,7 @@ StoreHelper = function () {
 
     let readPath = function (filePath, callback) {
         createFileSystem(function (fs) {
-            if (!fs) callback(null, new DOMException('The filesystem is undefined'));
+            if (!fs) callback(null, new Error('The filesystem is undefined'));
             fs.root.getFile(filePath, { create: false }, function (fileEntry) {
                 callback(fileEntry.toURL());
             }, function (err) {
@@ -319,6 +319,36 @@ StoreHelper = function () {
                 break;
         }
         console.log('Error: ' + msg);
+        createErrorUI(msg, e)
+    };
+
+    let createErrorUI = function (msg, err) {
+        let div = document.getElementById('error_div_persistent_id')
+            ? document.getElementById('error_div_persistent_id')
+            : document.createElement('div');
+        div.id = 'error_div_persistent_id';
+        div.className = 'error';
+        div.align = 'right'
+        let closeEl = document.getElementById('error_img_persistent_id')
+            ? document.getElementById('error_img_persistent_id')
+            : document.createElement('img');
+        closeEl.id = 'error_img_persistent_id';
+        closeEl.className = "error";
+        closeEl.style.display = 'block';
+        closeEl.onclick = function () {
+            this.parentNode.style.display = 'none';
+        };
+        div.appendChild(closeEl);
+        let text = document.getElementById('error_text_persistent_id')
+            ? document.getElementById('error_text_persistent_id')
+            : document.createElement('textarea');
+        text.id = 'error_text_persistent_id';
+        text.className = "error";
+        text.innerHTML = msg + '\n' + err;
+        div.appendChild(text);
+        div.style.display = 'block';
+        document.body.appendChild(div);
+        if (UITools) UITools.hideLoading();
     };
 
     let downloadFile = function(url, success) {

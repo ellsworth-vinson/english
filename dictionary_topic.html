@@ -77,6 +77,10 @@
 </div>
 <div id="container"></div>
 <a href="http://htmlpreview.github.io/?https://github.com/ellsworth-vinson/english/blob/master/topics.html"><--</a>
+<div id="errorid" class="error" style="display: none;">
+    <img class="error" style="display: block;" onclick="parentNode.style.display='none'">
+    <textarea id="texterrorid" class="error" style="display: block;"></textarea>
+</div>
 <script>
     function minMax(el) {
         let min = el.getAttribute('mode').localeCompare('min') == 0 ? true : false;
@@ -130,6 +134,30 @@
             });
         }
     }
+
+    window.onerror = function (msg, url, lineNo, columnNo, error) {
+        var string = msg.toLowerCase();
+        var substring = "script error";
+        if (string.indexOf(substring) > -1){
+            alert('Script Error: See Browser Console for Detail');
+        } else {
+            var message = [
+                'Message: ' + msg,
+                'URL: ' + url,
+                'Line: ' + lineNo,
+                'Column: ' + columnNo,
+                'Error object: ' + JSON.stringify(error)
+            ].join(' - ');
+
+            let el1 = document.getElementById('errorid');
+            let el2 = document.getElementById('texterrorid');
+            el2.innerHTML = el2.innerHTML + '\n-----\n' + message;
+            el1.style.display = 'block';
+            UITools.hideLoading();
+        }
+
+        return false;
+    };
 </script>
 </body>
 </html>

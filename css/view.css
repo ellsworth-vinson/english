@@ -37,6 +37,31 @@ img.del {
     border: none;
 }
 
+.error {
+    background-color: white;
+    height: 100%;
+    width: 100%;
+}
+
+textarea.error {
+    background-color: lightyellow;
+    height: 100%;
+    width: 100%;
+    cursor: default;
+    border-color: red;
+    font-size: small;
+}
+
+img.error {
+    background: url( '../img/close.png' ) no-repeat center;
+    background-size: 10px 10px;
+    border-style: none;
+    height: 10px;
+    width: 10px;
+    cursor: pointer;
+    right: 0;
+}
+
 #loading {
     width: 100%;
     height: 100%;
