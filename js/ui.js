@@ -301,6 +301,7 @@ function SpeakingTextUI(ownID, context, expImgUrl, collImgUrl, playStartImgUrl, 
         tr.appendChild(firstTdS);
 
         let firstTd = document.createElement("td");
+        firstTd.width = '32px';
         const ctl = document.createElement("IMG");
         firstTd.appendChild(ctl);
         if (!isHeader) {
